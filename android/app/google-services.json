@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "769139300588",
+    "project_id": "finance-master-pro-78d25",
+    "storage_bucket": "finance-master-pro-78d25.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:769139300588:android:09e3a392f9818132e0adc9",
+        "android_client_info": {
+          "package_name": "com.example.finance_master_pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFV2sVoR_vHdZJlfHayFWzwqkzpGcJbVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
