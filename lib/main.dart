@@ -27,10 +27,7 @@ class MyApp extends StatelessWidget {
       },
       theme: ThemeData(
         fontFamily: 'DMSans',
-        textTheme: Theme.of(context).textTheme.apply(
-          fontSizeFactor: 1,
-          fontSizeDelta: 2,
-        ),
+
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellowAccent[700]!),
         useMaterial3:true,
       ),

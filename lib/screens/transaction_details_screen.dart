@@ -30,13 +30,13 @@ class TransactionDetails extends StatelessWidget {
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.w600,
-              height: 1.2,
+
             ),
           ),
         ),
         leading: IconButton(
           icon: Icon(FontAwesomeIcons.circleArrowLeft,
-              color: Colors.yellowAccent[700]),
+              size: 30, color: Colors.yellowAccent[700]),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -75,7 +75,7 @@ class TransactionDetails extends StatelessWidget {
                 children: [
                   Container(
                     width: width * 0.35,
-                    height: 80,
+                    height: 75,
                     decoration: BoxDecoration(
                       color: transactionData['type'] == 'Income'
                           ? Colors.greenAccent.shade400
@@ -86,7 +86,7 @@ class TransactionDetails extends StatelessWidget {
                       child: Column(
                         children: [
                           SizedBox(
-                            height: 15,
+                            height: 10,
                           ),
                           Text(
                             'Type: ',
@@ -121,7 +121,7 @@ class TransactionDetails extends StatelessWidget {
                             ],
                           ),
                           SizedBox(
-                            height: 15,
+                            height: 10,
                           ),
                         ],
                       ),
@@ -130,7 +130,7 @@ class TransactionDetails extends StatelessWidget {
                   Spacer(),
                   Container(
                     width: width * 0.55,
-                    height: 80,
+                    height: 75,
                     decoration: BoxDecoration(
                       color: Colors.yellowAccent[700],
                       borderRadius: BorderRadius.circular(10),
@@ -139,7 +139,7 @@ class TransactionDetails extends StatelessWidget {
                       child: Column(
                         children: [
                           SizedBox(
-                            height: 15,
+                            height: 10,
                           ),
                           Text(
                             'Category: ',
@@ -173,7 +173,7 @@ class TransactionDetails extends StatelessWidget {
                             ],
                           ),
                           SizedBox(
-                            height: 15,
+                            height: 10,
                           ),
                         ],
                       ),
@@ -188,7 +188,7 @@ class TransactionDetails extends StatelessWidget {
                 children: [
                   Container(
                     width: width * 0.35,
-                    height: 80,
+                    height: 75,
                     decoration: BoxDecoration(
                       color: transactionData['type'] == 'Income'
                           ? Colors.greenAccent.shade400
@@ -199,7 +199,7 @@ class TransactionDetails extends StatelessWidget {
                       child: Column(
                         children: [
                           SizedBox(
-                            height: 15,
+                            height: 10,
                           ),
                           Text(
                             'Amount: ',
@@ -219,7 +219,7 @@ class TransactionDetails extends StatelessWidget {
                             ),
                           ),
                           SizedBox(
-                            height: 15,
+                            height: 10,
                           ),
                         ],
                       ),
@@ -228,7 +228,7 @@ class TransactionDetails extends StatelessWidget {
                   Spacer(),
                   Container(
                     width: width * 0.55,
-                    height: 80,
+                    height: 75,
                     decoration: BoxDecoration(
                       color: Colors.yellowAccent[700],
                       borderRadius: BorderRadius.circular(10),
@@ -237,7 +237,7 @@ class TransactionDetails extends StatelessWidget {
                       child: Column(
                         children: [
                           SizedBox(
-                            height: 15,
+                            height: 10,
                           ),
                           Text(
                             'Remaining Amount: ',
@@ -257,7 +257,7 @@ class TransactionDetails extends StatelessWidget {
                             ),
                           ),
                           SizedBox(
-                            height: 15,
+                            height: 10,
                           ),
                         ],
                       ),

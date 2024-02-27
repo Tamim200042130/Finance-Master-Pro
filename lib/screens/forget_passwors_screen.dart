@@ -17,7 +17,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   var isLoader = false;
 
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -39,7 +38,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     builder: (context) {
                       return AlertDialog(
                         backgroundColor: Color(0xFF252634),
-                        icon: Icon(Icons.check,
+                        icon: Icon(FontAwesomeIcons.circleCheck,
                             size: 50, color: Colors.greenAccent),
                         content: Text(
                             "Password reset link is sent. Check your email!!",
@@ -72,7 +71,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             return AlertDialog(
               backgroundColor: Color(0xFF252634),
               icon: Icon(
-                Icons.error,
+                FontAwesomeIcons.circleExclamation,
                 size: 50,
                 color: Colors.redAccent,
               ),
@@ -108,7 +107,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         backgroundColor: Color(0xFF252634),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(FontAwesomeIcons.circleArrowLeft, color: Colors.yellowAccent[700]),
+          icon: Icon(FontAwesomeIcons.circleArrowLeft,
+              color: Colors.yellowAccent[700]),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -164,14 +164,14 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                 borderRadius: BorderRadius.circular(10))),
                         child: isLoader
                             ? Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.black,
-                            ))
-                            : Text('Reset Password',
-                            style: TextStyle(
+                                child: CircularProgressIndicator(
                                 color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold)),
+                              ))
+                            : Text('Reset Password',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold)),
                       )),
                 ],
               ),
@@ -181,6 +181,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       ),
     );
   }
+
   InputDecoration _buildInputDecoration(String labelText, IconData icon) {
     return InputDecoration(
         fillColor: Color(0xAA494A59),

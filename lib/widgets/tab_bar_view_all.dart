@@ -1,5 +1,6 @@
 import 'package:finance_master_pro/widgets/transaction_list_all.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TypeTapBarAll extends StatelessWidget {
   const TypeTapBarAll(
@@ -23,7 +24,7 @@ class TypeTapBarAll extends StatelessWidget {
                 Tab(
                   text: 'Income',
                   icon: Icon(
-                    Icons.arrow_circle_up_outlined,
+                    FontAwesomeIcons.circleArrowUp,
                     color: Colors.greenAccent,
                     size: 25,
                   ),
@@ -31,7 +32,7 @@ class TypeTapBarAll extends StatelessWidget {
                 Tab(
                   text: 'Expense',
                   icon: Icon(
-                    Icons.arrow_circle_down_outlined,
+                    FontAwesomeIcons.circleArrowDown,
                     color: Colors.redAccent,
                     size: 25,
                   ),

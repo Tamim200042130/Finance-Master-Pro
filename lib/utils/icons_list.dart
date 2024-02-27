@@ -20,7 +20,6 @@ class AppIcons {
     {'icon': FontAwesomeIcons.shoppingCart, 'name': 'Shopping'},
     {'icon': FontAwesomeIcons.gasPump, 'name': 'Fuel'},
     {'icon': FontAwesomeIcons.soap, 'name': 'Laundry'},
-    {'icon': FontAwesomeIcons.film, 'name': 'Entertainment'},
     {'icon': FontAwesomeIcons.shoppingBasket, 'name': 'Grocery'},
     {'icon': FontAwesomeIcons.pills, 'name': 'Pharmacy'},
     {'icon': FontAwesomeIcons.parking, 'name': 'Parking'},

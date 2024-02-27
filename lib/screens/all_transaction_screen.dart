@@ -1,14 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:finance_master_pro/screens/home_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
-import '../widgets/transaction_list_all.dart';
-import '../widgets/tab_bar_view.dart';
-import '../widgets/transaction_card.dart';
-import '../widgets/type_bar_all.dart';
+import '../widgets/tab_bar_view_all.dart';
+import 'dashboard.dart';
 
 class AllTransactionScreen extends StatefulWidget {
   const AllTransactionScreen({
@@ -44,15 +40,16 @@ class _AllTransactionScreenState extends State<AllTransactionScreen> {
                 color: Colors.white,
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                height: 1.2),
+                ),
           ),
         ),
         leading: IconButton(
           icon: Icon(FontAwesomeIcons.circleArrowLeft,
+              size: 30,
               color: Colors.yellowAccent[700]),
           onPressed: () {
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => HomeScreen()),
+              MaterialPageRoute(builder: (context) => Dashboard()),
             );
           },
         ),

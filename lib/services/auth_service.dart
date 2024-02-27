@@ -23,14 +23,29 @@ class AuthService {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text('Sign Up Failed'),
-              content: Text(e.toString()),
+              backgroundColor: Color(0xFF252634),
+              title: Text('Sign Up Failed',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  )),
+              content: Text(e.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                  )),
               actions: [
                 TextButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text('OK'))
+                    child: Text(
+                      'Okay',
+                      style: TextStyle(
+                        color: Colors.yellowAccent[700],
+                      ),
+                    ))
               ],
             );
           });
@@ -51,14 +66,27 @@ class AuthService {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text('Login Error'),
-              content: Text(e.toString()),
+              backgroundColor: Color(0xFF252634),
+              title: Text('Login Error',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  )),
+              content: Text(e.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                  )),
               actions: [
                 TextButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text('OK'))
+                    child: Text('Okay',
+                        style: TextStyle(
+                          color: Colors.yellowAccent[700],
+                        )))
               ],
             );
           });

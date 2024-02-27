@@ -30,7 +30,6 @@ class _DashboardState extends State<Dashboard> {
             });
           },
         ),
-
         body: pageViewList[currentIndex]);
   }
 }
