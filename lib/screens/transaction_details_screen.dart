@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../utils/icons_list.dart';
+import 'edit_transaction.dart';
 
 class TransactionDetails extends StatelessWidget {
   const TransactionDetails({Key? key, required this.data}) : super(key: key);
@@ -29,7 +30,6 @@ class TransactionDetails extends StatelessWidget {
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.w600,
-
             ),
           ),
         ),
@@ -40,6 +40,24 @@ class TransactionDetails extends StatelessWidget {
             Navigator.of(context).pop();
           },
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              FontAwesomeIcons.solidPenToSquare,
+              size: 25,
+              color: Colors.yellowAccent[700],
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      EditTransaction(transactionData: transactionData),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
