@@ -1,12 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance_master_pro/screens/all_transaction_screen.dart';
-import 'package:finance_master_pro/utils/icons_list.dart';
 import 'package:finance_master_pro/widgets/transaction_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TransactionsCard extends StatelessWidget {
   const TransactionsCard({super.key});

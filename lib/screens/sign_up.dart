@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../utils/appValidator.dart';
 import '../widgets/dissmiss_keyboard_on_tap.dart';
-import 'dashboard.dart';
 import 'login_screen.dart';
 
 class SignUp extends StatefulWidget {

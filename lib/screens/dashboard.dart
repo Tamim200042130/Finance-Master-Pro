@@ -1,5 +1,4 @@
 import 'package:finance_master_pro/screens/home_screen.dart';
-import 'package:finance_master_pro/screens/login_screen.dart';
 import 'package:finance_master_pro/screens/transaction_screen.dart';
 import 'package:finance_master_pro/widgets/navbar.dart';
 import 'package:flutter/material.dart';

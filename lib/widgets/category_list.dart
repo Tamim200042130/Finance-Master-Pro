@@ -1,5 +1,4 @@
 import 'package:finance_master_pro/utils/icons_list.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
