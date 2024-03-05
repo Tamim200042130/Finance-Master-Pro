@@ -31,6 +31,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF252634),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF252634),
         title: Center(
           child: const Text(

@@ -1,26 +1,69 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 import '../utils/icons_list.dart';
 import 'edit_transaction.dart';
 
-class TransactionDetails extends StatelessWidget {
+class TransactionDetails extends StatefulWidget {
   const TransactionDetails({Key? key, required this.data}) : super(key: key);
 
   final QueryDocumentSnapshot<Map<String, dynamic>> data;
+
+
+  @override
+  State<TransactionDetails> createState() => _TransactionDetailsState();
+}
+
+class _TransactionDetailsState extends State<TransactionDetails> {
+  bool isBannerLoaded = false;
+  late BannerAd _bannerAd;
+
+  initializeBannerAd() async {
+    _bannerAd = BannerAd(
+      adUnitId: 'ca-app-pub-4938034475866068/4263503392',
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          setState(() {
+            isBannerLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          ad.dispose();
+        },
+      ),
+    );
+    _bannerAd.load();
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    initializeBannerAd();
+  }
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     final appIcons = AppIcons();
-    final transactionData = data.data();
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(data['timestamp']);
+    final transactionData = widget.data.data();
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(widget.data['timestamp']);
     String formattedDate = DateFormat('d MMM hh:mm a').format(date);
+
 
     return Scaffold(
       backgroundColor: const Color(0xFF252634),
+      bottomNavigationBar: isBannerLoaded
+          ? Container(
+        height: 50,
+        child: AdWidget(ad: _bannerAd),
+      )
+          : SizedBox(),
       appBar: AppBar(
         backgroundColor: const Color(0xFF252634),
         title: Center(

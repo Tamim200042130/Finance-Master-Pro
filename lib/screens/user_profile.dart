@@ -37,10 +37,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
     DateTime? date;
     String formattedDate = '';
 
-    if (_userDoc != null) {
-      date = DateTime.fromMillisecondsSinceEpoch(_userDoc['updatedAt']);
-      formattedDate = DateFormat('dd MMMM yyyy hh:mm a').format(date);
-    }
+    date = DateTime.fromMillisecondsSinceEpoch(_userDoc['updatedAt']);
+    formattedDate = DateFormat('dd MMMM yyyy hh:mm a').format(date);
 
     return Scaffold(
       backgroundColor: const Color(0xFF252634),
@@ -166,7 +164,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'Total Expense: ${_userDoc['totalExpense']}',
+                            'Total Income: ${_userDoc['totalIncome']}',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 18,
@@ -175,7 +173,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'Total Income: ${_userDoc['totalIncome']}',
+                            'Total Expense: ${_userDoc['totalExpense']}',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 18,
