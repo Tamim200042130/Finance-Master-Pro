@@ -5,6 +5,12 @@ class AppIcons {
   final List<Map<String, dynamic>> homeExpensesCategories = [
     {'icon': FontAwesomeIcons.moneyBill, 'name': 'Tuition Salary'},
     {'icon': FontAwesomeIcons.bus, 'name': 'Transport'},
+    {'icon': FontAwesomeIcons.shirt, 'name': 'Cloth'},
+    {'icon': FontAwesomeIcons.desktop, 'name': 'Accessories'},
+    {'icon': FontAwesomeIcons.shoppingBag, 'name': 'Shopping'},
+    {'icon': FontAwesomeIcons.utensils, 'name': 'Food'},
+    {'icon': FontAwesomeIcons.houseMedical, 'name': 'Health'},
+    {'icon': FontAwesomeIcons.phone, 'name': 'Phone'},
     {'icon': FontAwesomeIcons.home, 'name': 'Rent'},
     {'icon': FontAwesomeIcons.bolt, 'name': 'Electricity'},
     {'icon': FontAwesomeIcons.water, 'name': 'Water'},
@@ -12,12 +18,7 @@ class AppIcons {
     {'icon': FontAwesomeIcons.mobileAlt, 'name': 'Mobile'},
     {'icon': FontAwesomeIcons.tv, 'name': 'TV'},
     {'icon': FontAwesomeIcons.gasPump, 'name': 'Gas'},
-    {'icon': FontAwesomeIcons.heartbeat, 'name': 'Health'},
-    {'icon': FontAwesomeIcons.shoppingBag, 'name': 'Shopping'},
-    {'icon': FontAwesomeIcons.utensils, 'name': 'Food'},
-    {'icon': FontAwesomeIcons.houseMedical, 'name': 'Health'},
     {'icon': FontAwesomeIcons.creditCard, 'name': 'Credit Card'},
-    {'icon': FontAwesomeIcons.shoppingCart, 'name': 'Shopping'},
     {'icon': FontAwesomeIcons.gasPump, 'name': 'Fuel'},
     {'icon': FontAwesomeIcons.soap, 'name': 'Laundry'},
     {'icon': FontAwesomeIcons.shoppingBasket, 'name': 'Grocery'},
@@ -34,7 +35,6 @@ class AppIcons {
     {'icon': FontAwesomeIcons.hotel, 'name': 'Hotel'},
     {'icon': FontAwesomeIcons.houseCrack, 'name': 'Mall'},
     {'icon': FontAwesomeIcons.truck, 'name': 'Shipping'},
-    {'icon': FontAwesomeIcons.phone, 'name': 'Phone'}
   ];
 
   IconData getExpenseCategoryIcons(String categoryName) {
