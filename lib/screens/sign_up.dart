@@ -41,6 +41,7 @@ class _SignUpState extends State<SignUp> {
         'remainingAmount': 0,
         'totalIncome': 0,
         'totalExpense': 0,
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
       };
       await authService.createUser(data, context);
       setState(() {

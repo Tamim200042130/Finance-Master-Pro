@@ -1,5 +1,6 @@
 import 'package:finance_master_pro/screens/home_screen.dart';
 import 'package:finance_master_pro/screens/transaction_screen.dart';
+import 'package:finance_master_pro/screens/user_profile.dart';
 import 'package:finance_master_pro/widgets/navbar.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ class _DashboardState extends State<Dashboard> {
   var authService = AuthService();
   var isLogoutLoading = false;
   int currentIndex = 0;
-  var pageViewList = [HomeScreen(), TransactionScreen()];
+  var pageViewList = [HomeScreen(), TransactionScreen(), UserProfilePage()];
 
   @override
   Widget build(BuildContext context) {

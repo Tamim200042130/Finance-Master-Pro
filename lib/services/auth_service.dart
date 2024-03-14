@@ -26,7 +26,7 @@ class AuthService {
               backgroundColor: Color(0xFF252634),
               title: Text('Sign Up Failed',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.redAccent,
                     fontWeight: FontWeight.w600,
                   )),
               content: Text(e.toString(),
@@ -44,6 +44,7 @@ class AuthService {
                       'Okay',
                       style: TextStyle(
                         color: Colors.yellowAccent[700],
+                        fontSize: 18,
                       ),
                     ))
               ],
@@ -69,7 +70,7 @@ class AuthService {
               backgroundColor: Color(0xFF252634),
               title: Text('Login Error',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.redAccent,
                     fontWeight: FontWeight.w600,
                   )),
               content: Text(e.toString(),
@@ -86,6 +87,7 @@ class AuthService {
                     child: Text('Okay',
                         style: TextStyle(
                           color: Colors.yellowAccent[700],
+                          fontSize: 18,
                         )))
               ],
             );

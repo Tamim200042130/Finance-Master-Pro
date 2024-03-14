@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class NavBar extends StatelessWidget {
   NavBar(
@@ -12,7 +13,7 @@ class NavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
-      backgroundColor:Color(0xFF252634),
+      backgroundColor: Color(0xFF252634),
       selectedIndex: selectedIndex,
       onDestinationSelected: onDestinationSelected,
       indicatorColor: Colors.yellowAccent[700],
@@ -20,16 +21,44 @@ class NavBar extends StatelessWidget {
       height: 65,
       destinations: const <Widget>[
         NavigationDestination(
-          icon: Icon(Icons.home_rounded,color: Colors.white,size: 30,),
-          selectedIcon: Icon(Icons.home_rounded,color: Colors.black,size: 30,),
+          icon: Icon(
+            Icons.home_rounded,
+            color: Colors.white,
+            size: 30,
+          ),
+          selectedIcon: Icon(
+            Icons.home_rounded,
+            color: Colors.black,
+            size: 30,
+          ),
           label: 'Home',
         ),
         NavigationDestination(
-          icon: Icon(Icons.account_balance_wallet_rounded,color: Colors.white,size: 30,),
-          selectedIcon: Icon(Icons.account_balance_wallet_rounded,color: Colors.black,size: 30,),
+          icon: Icon(
+            Icons.account_balance_wallet_rounded,
+            color: Colors.white,
+            size: 30,
+          ),
+          selectedIcon: Icon(
+            Icons.account_balance_wallet_rounded,
+            color: Colors.black,
+            size: 30,
+          ),
           label: 'Transactions',
         ),
-
+        NavigationDestination(
+          icon: Icon(
+            FontAwesomeIcons.solidCircleUser,
+            color: Colors.white,
+            size: 28,
+          ),
+          selectedIcon: Icon(
+            FontAwesomeIcons.solidCircleUser,
+            color: Colors.black,
+            size: 28,
+          ),
+          label: 'Profile',
+        ),
       ],
     );
   }

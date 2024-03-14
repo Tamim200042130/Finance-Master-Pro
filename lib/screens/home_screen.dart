@@ -23,65 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
   var isLogoutLoading = false;
   String? userName;
 
-  _dialogLogout(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Color(0xFF252634),
-          title: const Text(
-            'Are you sure?',
-            style: TextStyle(color: Colors.white),
-          ),
-          content: const Text(
-            'Do you want to logout?',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 20,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text(
-                'Cancel',
-                style: TextStyle(
-                  color: Colors.yellowAccent,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-                setState(() {
-                  isLogoutLoading = true;
-                });
-                authService.logout();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => Login()),
-                );
-                setState(() {
-                  isLogoutLoading = false;
-                });
-              },
-              child: const Text(
-                'Logout',
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
+
+
 
   _dialogAdd(BuildContext context) {
     return showDialog(
@@ -139,19 +82,19 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Color(0xFF252634),
         title: Row(
           children: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UserProfilePage()),
-                );
-              },
-              icon: Icon(
-                FontAwesomeIcons.solidCircleUser,
-                color: Colors.yellowAccent[700],
-                size: 30,
-              ),
-            ),
+            // IconButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => UserProfilePage()),
+            //     );
+            //   },
+            //   icon: Icon(
+            //     FontAwesomeIcons.solidCircleUser,
+            //     color: Colors.yellowAccent[700],
+            //     size: 30,
+            //   ),
+            // ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -166,21 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              _dialogLogout(context);
-            },
-            icon: isLogoutLoading
-                ? CircularProgressIndicator()
-                : Icon(
-                    FontAwesomeIcons.rightFromBracket,
-                    color: Colors.yellowAccent[700],
-                    size: 30,
-                  ),
-          ),
-          SizedBox(width: 10),
-        ],
       ),
       body: DismissKeyboardOnTap(
         child: SingleChildScrollView(
