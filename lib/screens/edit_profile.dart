@@ -65,7 +65,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     'OK',
                     style: TextStyle(
                         color: Colors.yellowAccent[700],
-                        fontWeight: FontWeight.w600,fontSize: 18),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18),
                   ),
                 ),
               ],
@@ -163,8 +164,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     style: TextStyle(color: Colors.white),
                     keyboardType: TextInputType.text,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    decoration:
-                        _buildInputDecoration('Phone Number', FontAwesomeIcons.phone),
+                    decoration: _buildInputDecoration(
+                        'Phone Number', FontAwesomeIcons.phone),
                     validator: appValidator.validatePhoneNumber,
                   ),
                   SizedBox(height: 20),
@@ -173,8 +174,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     style: TextStyle(color: Colors.white),
                     keyboardType: TextInputType.text,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    decoration:
-                        _buildInputDecoration('Username', FontAwesomeIcons.pencil),
+                    decoration: _buildInputDecoration(
+                        'Username', FontAwesomeIcons.pencil),
                     validator: appValidator.validateUsername,
                   ),
                   SizedBox(height: 20),
