@@ -164,7 +164,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     keyboardType: TextInputType.text,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     decoration:
-                        _buildInputDecoration('Title', FontAwesomeIcons.phone),
+                        _buildInputDecoration('Phone Number', FontAwesomeIcons.phone),
                     validator: appValidator.validatePhoneNumber,
                   ),
                   SizedBox(height: 20),
@@ -174,7 +174,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     keyboardType: TextInputType.text,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     decoration:
-                        _buildInputDecoration('Title', FontAwesomeIcons.pencil),
+                        _buildInputDecoration('Username', FontAwesomeIcons.pencil),
                     validator: appValidator.validateUsername,
                   ),
                   SizedBox(height: 20),
