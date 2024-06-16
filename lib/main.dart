@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         );
       },
       theme: ThemeData(
-        fontFamily: 'DMSans',
+        fontFamily: 'Forum',
 
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellowAccent[700]!),
         useMaterial3:true,

@@ -29,49 +29,75 @@ class TransactionList extends StatelessWidget {
       query = query.where('category', isEqualTo: category);
     }
 
-    return FutureBuilder<QuerySnapshot>(
-        future: query.limit(150).get(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: const Text(
-                'Something went wrong',
-                style: TextStyle(
-                    color: Colors.yellowAccent,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600),
-              ),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 15),
-              child: Center(
-                  child: const Text(
-                'You Have No Transactions',
-                style: TextStyle(
-                    color: Colors.yellowAccent,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600),
-              )),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-                child: const CircularProgressIndicator(
-              color: Colors.yellowAccent,
-            ));
-          }
-          var data = snapshot.data!.docs;
-          return ListView.builder(
-            padding: EdgeInsets.all(8),
-            shrinkWrap: true,
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              var cardData = data[index];
-              return TransactionCard(
-                data: cardData,
-              );
-            },
+    return StreamBuilder<QuerySnapshot>(
+      stream: query.snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: const Text(
+              'Something went wrong',
+              style: TextStyle(
+                  color: Colors.yellowAccent,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600),
+            ),
           );
-        });
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+              child: const CircularProgressIndicator(
+            color: Colors.yellowAccent,
+          ));
+        } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 15),
+            child: Center(
+                child: const Text(
+              'You Have No Transactions',
+              style: TextStyle(
+                  color: Colors.yellowAccent,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600),
+            )),
+          );
+        }
+
+        var data = snapshot.data!.docs;
+        double totalAmount = 0.0;
+
+        for (var doc in data) {
+          totalAmount += doc['amount'];
+        }
+
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                type == 'Income'
+                    ? 'Total Income: ${totalAmount.toStringAsFixed(0)} \৳'
+                    : 'Total Expense: ${totalAmount.toStringAsFixed(0)} \৳',
+                style: TextStyle(
+                    color: type == 'Income' ? Colors.green : Colors.red,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.all(8),
+                shrinkWrap: true,
+                itemCount: data.length,
+                itemBuilder: (context, index) {
+                  var cardData = data[index];
+                  return TransactionCard(
+                    data: cardData,
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

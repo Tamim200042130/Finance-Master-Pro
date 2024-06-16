@@ -98,6 +98,9 @@ flutter:
       fonts:
         - asset: lib/assets/fonts/DMSans_Regular.ttf
           weight: 700
+    - family: Forum
+      fonts:
+        - asset: lib/assets/fonts/Forum-Regular.ttf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
