@@ -23,15 +23,15 @@ class MyApp extends StatelessWidget {
       title: 'Finance Master Pro',
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(1.0)),
           child: child!,
         );
       },
       theme: ThemeData(
         fontFamily: 'Forum',
-
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellowAccent[700]!),
-        useMaterial3:true,
+        useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
       home: AuthGate(),
