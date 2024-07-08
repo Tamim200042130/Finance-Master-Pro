@@ -32,10 +32,17 @@ jobs:
           if_true: ${{ secrets.DRIVEFOLDERID }}
       - run: flutter pub get
       - run: flutter build apk --release
-#      - name: Upload APK to Google Drive
-#        uses: jakejarvis/google-drive-upload-action@master
-#        with:
-#          service-account-auth: ${{ secrets.SERVICE_ACCOUNT_AUTH }}
-#          file: build/app/outputs/flutter-apk/app-release.apk
-#          folder-id: ${{ steps.folder_id.outputs.result }}
-#          name: app-release-${{ steps.branch.outputs.branch }}-${{ steps.date.outputs.date }}.apk
+      - name: Archive Files
+        run: |
+          sudo apt-get update
+          sudo apt-get install zip
+          zip -r archive.zip *
+      - name: Upload to gdrive
+        uses: adityak74/google-drive-upload-git-action@main
+        with:
+          credentials: ${{ secrets.CREDENTIALS }}
+          filename: "build/app/outputs/flutter-apk/app-release.apk"
+          folderId: ${{ steps.folder_id.outputs.value }}
+          name: ${{ steps.date.outputs.branch }}-${{ steps.branch.outputs.date }}.apk
+          overwrite: "true"
+          mimeType: "application/vnd.android.package-archive"
