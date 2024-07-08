@@ -88,5 +88,4 @@ jobs:
           git config --global user.name "GitHub Actions"
           git add version.txt
           git commit -m "Increment version to ${{ steps.increment_version.outputs.new_version }}"
-          git push https://github.com/${{ github.repository }}.git HEAD:${{ github.ref }}
-      
+          git push https://github.com/${{ github.repository }}.git HEAD:${{ github.ref }} --force-with-lease
