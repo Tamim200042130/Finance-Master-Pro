@@ -82,10 +82,14 @@ jobs:
           overwrite: "true"
           mimeType: "application/vnd.android.package-archive"
 
-      - name: Commit Updated Version
+      - name: Configure Git
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
+
+      - name: Commit Updated Version
+        run: |
           git add version.txt
           git commit -m "Increment version to ${{ steps.increment_version.outputs.new_version }}"
-          git push https://github.com/${{ github.repository }}.git HEAD:${{ github.ref }} --force-with-lease
+          git push origin HEAD:${{ github.ref }}
+
