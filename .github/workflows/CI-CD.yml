@@ -24,3 +24,12 @@ jobs:
       - name: Get Today Date
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+      - name: Get Folder Id by condition
+        uses: haya14busa/action-cond@v1
+        id: folder_id
+        with:
+          condition: ${{ steps.branch.outputs.branch == 'main' }}
+          if_true: ${{ secrets.DRIVEFOLDERID }}
+      - run: flutter pub get
+      - run: flutter build apk --release
+        
