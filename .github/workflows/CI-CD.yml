@@ -43,6 +43,6 @@ jobs:
           credentials: ${{ secrets.CREDENTIALS }}
           filename: "build/app/outputs/apk/release/app-release.apk"
           folderId: ${{ steps.folder_id.outputs.value }}
-          name: ${{ steps.date.outputs.branch }}-${{ steps.branch.outputs.date }}.apk
+          name: ${{ steps.date.outputs.date }}-${{ steps.branch.outputs.branch }}.apk
           overwrite: "true"
           mimeType: "application/vnd.android.package-archive"
