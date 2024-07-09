@@ -64,7 +64,7 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --split-per-abi
 
 #      - name: Build iOS
 #        run: |
@@ -95,11 +95,6 @@ jobs:
           name: "Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
           overwrite: "true"
           mimeType: "application/vnd.android.package-archive"
-
-      - name: Verify Upload
-        run: |
-          echo "Verifying upload..."
-          # Implement additional steps here to verify if the overwrite was successful, if possible
 
       - name: Configure Git
         run: |
