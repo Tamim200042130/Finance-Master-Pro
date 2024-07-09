@@ -93,3 +93,10 @@ jobs:
           git commit -m "Increment version to ${{ steps.increment_version.outputs.new_version }}"
           git push origin HEAD:${{ github.ref }}
 
+      - name: Push to Releases
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa"
+          tag: v1.0.${{ github.run_number }}
+          token: ${{ secrets.CREDENTIALS }}
+
