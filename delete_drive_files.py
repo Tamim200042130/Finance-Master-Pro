@@ -1,7 +1,16 @@
-# delete_drive_files.py
+import base64
+import json
+import os
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
-import os
+
+# Decode the base64-encoded credentials
+credentials_base64 = os.getenv('GOOGLE_CREDENTIALS_BASE64')
+credentials_json = base64.b64decode(credentials_base64).decode('utf-8')
+
+# Save the credentials to a temporary file
+with open('credentials.json', 'w') as f:
+    f.write(credentials_json)
 
 # Load credentials
 credentials = service_account.Credentials.from_service_account_file(
