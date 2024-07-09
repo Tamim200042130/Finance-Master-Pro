@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_upload_notify:
-    name: Build, Upload, Release, and Notify
+    name: Build, Upload, Release and Notify
     runs-on: ubuntu-latest
 
     steps:
@@ -64,7 +64,8 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release --split-per-abi
+        run: |
+          flutter build apk --release 
 
 #      - name: Build iOS
 #        run: |
@@ -76,21 +77,17 @@ jobs:
 #          cd ..
 #          zip -r app.ipa Payload
 
-      - name: Rename APK
-        run: |
-          mv build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk build/app/outputs/flutter-apk/Finance_Master_Pro.apk
-
       - name: Archive Files
         run: |
           sudo apt-get update
           sudo apt-get install -y zip
-          zip -r archive.zip build/app/outputs/flutter-apk/Finance_Master_Pro.apk
+          zip -r archive.zip build/app/outputs/apk/release/app-release.apk
 
       - name: Upload to Google Drive
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.CREDENTIALS }}
-          filename: "build/app/outputs/flutter-apk/Finance_Master_Pro.apk"
+          filename: "build/app/outputs/apk/release/app-release.apk"
           folderId: ${{ steps.folder_id.outputs.value }}
           name: "Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
           overwrite: "true"
@@ -110,6 +107,7 @@ jobs:
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/flutter-apk/Finance_Master_Pro.apk,build/ios/iphoneos/app.ipa"
+          artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.GH_PAT }}
+
