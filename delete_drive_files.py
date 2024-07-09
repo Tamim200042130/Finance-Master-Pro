@@ -20,7 +20,7 @@ credentials = service_account.Credentials.from_service_account_file(
 
 drive_service = build('drive', 'v3', credentials=credentials)
 
-folder_id = os.getenv('FOLDER_ID')
+folder_id = os.getenv('DRIVEFOLDERID')
 
 # List all files in the folder
 query = f"'{folder_id}' in parents"
