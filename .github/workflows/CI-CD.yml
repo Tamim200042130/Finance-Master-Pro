@@ -66,16 +66,6 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
-      - name: Build iOS
-        run: |
-          flutter build ios --no-codesign
-          cd build/ios/iphoneos
-          mkdir Payload
-          cd Payload
-          ln -s ../Runner.app
-          cd ..
-          zip -r app.ipa Payload
-
       - name: Archive Files
         run: |
           sudo apt-get update
@@ -109,3 +99,14 @@ jobs:
           artifacts: "build/app/outputs/apk/release/Finance_Master_Pro,build/ios/iphoneos/app.ipa"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.GH_PAT }}
+
+#      - name: Notify on Slack
+#        uses: rtCamp/action-slack-notify@v2
+#        env:
+#          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+#          SLACK_USERNAME: GitHub Actions
+#          SLACK_TITLE: "New Release"
+#          SLACK_MESSAGE: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
+#          SLACK_COLOR: good
+#          SLACK_CHANNEL: "#general"
+#          SLACK_ICON: "https://avatars.githubusercontent.com/u/44036562?s=200&v=4"
