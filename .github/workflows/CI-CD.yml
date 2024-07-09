@@ -93,12 +93,6 @@ jobs:
           overwrite: "true"
           mimeType: "application/vnd.android.package-archive"
 
-      - name: Make Uploaded File Public
-        env:
-          GOOGLE_CREDENTIALS_BASE64: ${{ secrets.CREDENTIALS }}
-          FILE_ID: ${{ steps.upload.outputs.fileId }}
-        run: python make_file_public.py
-
       - name: Configure Git
         run: |
           git config --global user.email "actions@github.com"
@@ -121,9 +115,18 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_USERNAME: GitHub Actions
-          SLACK_TITLE: "New Release"
-          SLACK_MESSAGE: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
+          SLACK_USERNAME: Mohammad Tamim Ibn Hossain
+          SLACK_TITLE: "🎉🎉 New Release Available 🎉🎉"
+          LACK_MESSAGE: |
+            A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
+            [Download the APK](https://drive.google.com/drive/folders/1k51cCnURx-V04zzyrerRMDSo-YCWrKEP?usp=sharing)
           SLACK_COLOR: good
           SLACK_CHANNEL: "#finance-master-pro"
           SLACK_ICON: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQIdeZ1MahCe2snsur1xczoHnlPx6ENMuJH6UDWWhNYjIfAQyuj"
+
+      - name: Notify on Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
