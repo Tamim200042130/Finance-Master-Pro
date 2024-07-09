@@ -118,5 +118,6 @@ jobs:
           SLACK_TITLE: "New Release"
           SLACK_MESSAGE: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
           SLACK_COLOR: good
-          SLACK_CHANNEL: "#general"
-          SLACK_ICON: "https://avatars.githubusercontent.com/u/44036562?s=200&v=4"
+          SLACK_CHANNEL: "#finance-master-pro"
+          SLACK_ICON: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQIdeZ1MahCe2snsur1xczoHnlPx6ENMuJH6UDWWhNYjIfAQyuj"
+
