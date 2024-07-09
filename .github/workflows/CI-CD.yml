@@ -170,10 +170,6 @@ jobs:
           echo "new_version=$new_version" >> $GITHUB_OUTPUT
           echo $new_version > version.txt
 
-      - name: Get Folder Id by Condition
-        id: folder_id
-        run: echo "value=${{ secrets.DRIVEFOLDERID }}" >> $GITHUB_OUTPUT
-
       - name: Install Python
         uses: actions/setup-python@v2
         with:
@@ -184,7 +180,7 @@ jobs:
 
       - name: Delete Existing Files from Google Drive
         env:
-          FOLDER_ID: ${{ steps.folder_id.outputs.value }}
+          FOLDER_ID: ${{ secrets.DRIVEFOLDERID }}
           GOOGLE_CREDENTIALS_BASE64: ${{ secrets.CREDENTIALS }}
         run: python delete_drive_files.py
 
@@ -205,7 +201,7 @@ jobs:
         with:
           credentials: ${{ secrets.CREDENTIALS }}
           filename: "build/app/outputs/apk/release/app-release.apk"
-          folderId: ${{ steps.folder_id.outputs.value }}
+          folderId: ${{ secrets.DRIVEFOLDERID }}
           name: "Finance Master Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
           overwrite: "true"
           mimeType: "application/vnd.android.package-archive"
