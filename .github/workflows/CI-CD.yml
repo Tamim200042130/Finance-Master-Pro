@@ -27,15 +27,15 @@ jobs:
 
       - name: Get Branch Name
         id: branch
-        run: echo "branch=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+        run: echo "branch=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Get Today's Date
         id: date
-        run: echo "date=$(date +'%d%m%y')" >> $GITHUB_OUTPUT
+        run: echo "date=$(date +'%d%m%y')" >> $GITHUB_ENV
 
       - name: Read Current Version
         id: read_version
-        run: echo "version=$(cat version.txt)" >> $GITHUB_OUTPUT
+        run: echo "version=$(cat version.txt)" >> $GITHUB_ENV
 
       - name: Increment Version
         id: increment_version
@@ -53,7 +53,7 @@ jobs:
           fi
           
           new_version="$major.$minor"
-          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+          echo "new_version=$new_version" >> $GITHUB_ENV
           echo $new_version > version.txt
 
       - name: Install Python
@@ -61,14 +61,15 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install Google API Client
-        run: pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+      - name: Install Required Packages
+        run: |
+          pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
-      - name: Delete Existing Files from Google Drive
+      - name: Make Uploaded File Public on Google Drive
         env:
-          FOLDER_ID: ${{ secrets.DRIVEFOLDERID }}
           GOOGLE_CREDENTIALS_BASE64: ${{ secrets.CREDENTIALS }}
-        run: python delete_drive_files.py
+          FILE_ID: ${{ secrets.DRIVEFILEID }}
+        run: python make_file_public.py
 
       - name: Install Flutter Dependencies
         run: flutter pub get
@@ -83,7 +84,6 @@ jobs:
           zip -r archive.zip build/app/outputs/apk/release/app-release.apk
 
       - name: Upload to Google Drive
-        id: upload
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.CREDENTIALS }}
@@ -92,12 +92,6 @@ jobs:
           name: "Finance Master Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
           overwrite: "true"
           mimeType: "application/vnd.android.package-archive"
-
-      - name: Make Uploaded File Public
-        env:
-          GOOGLE_CREDENTIALS_BASE64: ${{ secrets.CREDENTIALS }}
-          FILE_ID: ${{ steps.upload.outputs.fileId }}
-        run: python make_file_public.py
 
       - name: Configure Git
         run: |
