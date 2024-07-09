@@ -32,5 +32,8 @@ if not items:
 else:
     for item in items:
         file_id = item['id']
-        drive_service.files().delete(fileId=file_id).execute()
-        print(f'Deleted file: {item["name"]} ({file_id})')
+        try:
+            drive_service.files().delete(fileId=file_id).execute()
+            print(f'Deleted file: {item["name"]} ({file_id})')
+        except Exception as e:
+            print(f'Failed to delete file: {item["name"]} ({file_id}) with error: {e}')
