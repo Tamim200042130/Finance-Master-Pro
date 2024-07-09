@@ -114,9 +114,11 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_USERNAME: GitHub Actions
-          SLACK_TITLE: "New Release"
-          SLACK_MESSAGE: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
+          SLACK_USERNAME: Mohammad Tamim Ibn Hossain
+          SLACK_TITLE: "🎉🎉 New Release Available 🎉🎉"
+          SLACK_MESSAGE: |
+            A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
+            [Download the APK](https://drive.google.com/uc?id=${{ steps.upload.outputs.fileId }}&export=download)
           SLACK_COLOR: good
           SLACK_CHANNEL: "#finance-master-pro"
           SLACK_ICON: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQIdeZ1MahCe2snsur1xczoHnlPx6ENMuJH6UDWWhNYjIfAQyuj"
