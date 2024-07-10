@@ -125,7 +125,7 @@ jobs:
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         run: |
-          curl -F file=@build/app/outputs/apk/release/app-release.apk \
+          curl -F file=@build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk \
                -F channels=#finance-master-pro \
                -F token=${SLACK_TOKEN} \
                https://slack.com/api/files.upload
@@ -142,7 +142,7 @@ jobs:
           SLACK_COLOR: good
           SLACK_CHANNEL: "#finance-master-pro"
           SLACK_ICON: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQIdeZ1MahCe2snsur1xczoHnlPx6ENMuJH6UDWWhNYjIfAQyuj"
-      
+
 
       - name: Upload APK and Send Telegram Message
         run: python send_telegram_message.py
