@@ -127,10 +127,11 @@ jobs:
       - name: Install requests
         run: pip install requests
 
-      - name: Send Telegram Message
+      - name: Upload APK and Send Telegram Message
         run: python send_telegram_message.py
         env:
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
-          MESSAGE: ${{ steps.message.outputs.message }}
+           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+           TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
+           MESSAGE: ${{ env.MESSAGE }}
+           APK_FILE_PATH: build/app/outputs/apk/release/app-release.apk
