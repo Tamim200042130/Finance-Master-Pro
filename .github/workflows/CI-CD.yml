@@ -120,7 +120,18 @@ jobs:
           tag: v${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
           token: ${{ secrets.GH_PAT }}
 
-      - name: Notify on Slack
+
+      - name: Upload APK to Slack
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        run: |
+          curl -F file=@build/app/outputs/apk/release/app-release.apk \
+               -F channels=#finance-master-pro \
+               -F token=${SLACK_TOKEN} \
+               https://slack.com/api/files.upload
+
+
+      - name: Notify on Slack with APK
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -128,10 +139,10 @@ jobs:
           SLACK_TITLE: "🎉🎉 New Release Available 🎉🎉"
           SLACK_MESSAGE: |
             A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
-            [Download the APK](https://drive.google.com/drive/folders/1k51cCnURx-V04zzyrerRMDSo-YCWrKEP?usp=sharing)
           SLACK_COLOR: good
           SLACK_CHANNEL: "#finance-master-pro"
           SLACK_ICON: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQIdeZ1MahCe2snsur1xczoHnlPx6ENMuJH6UDWWhNYjIfAQyuj"
+      
 
       - name: Upload APK and Send Telegram Message
         run: python send_telegram_message.py
