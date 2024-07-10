@@ -124,9 +124,10 @@ jobs:
           SLACK_CHANNEL: "#finance-master-pro"
           SLACK_ICON: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQIdeZ1MahCe2snsur1xczoHnlPx6ENMuJH6UDWWhNYjIfAQyuj"
 
-#      - name: Notify on Telegram
-#        uses: appleboy/telegram-action@master
-#        with:
-#          to: ${{ secrets.TELEGRAM_TO }}
-#          token: ${{ secrets.TELEGRAM_TOKEN }}
-#          message: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
+      - name: Notify on Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message_thread_id: ${{ secrets.TELEGRAM_THREAD_ID }}
+          message: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
