@@ -1,4 +1,5 @@
 import os
+
 import requests
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
@@ -21,12 +22,11 @@ if response.status_code == 200:
     document_link = response.json()['result']['document']['file_id']
     print("APK file uploaded successfully")
 
-    # Send message with APK file link
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     data = {
         "chat_id": TELEGRAM_CHAT_ID,
         "message_thread_id": TELEGRAM_THREAD_ID,
-        "text": f"{MESSAGE}\nDownload Now: {document_link}",
+        # "text": f"{MESSAGE}\nDownload Now: {document_link}",
     }
 
     response = requests.post(url, data=data)
