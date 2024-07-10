@@ -64,6 +64,9 @@ jobs:
       - name: Install Google API Client
         run: pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
+      - name: Install requests
+        run: pip install requests
+
       - name: Delete Existing Files from Google Drive
         env:
           FOLDER_ID: ${{ secrets.DRIVEFOLDERID }}
@@ -76,18 +79,23 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
+      - name: Rename APK File
+        run: |
+          mv build/app/outputs/apk/release/app-release.apk build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+
+
       - name: Archive Files
         run: |
           sudo apt-get update
           sudo apt-get install -y zip
-          zip -r archive.zip build/app/outputs/apk/release/app-release.apk
+          zip -r archive.zip build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
 
       - name: Upload to Google Drive
         id: upload
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.CREDENTIALS }}
-          filename: "build/app/outputs/apk/release/app-release.apk"
+          filename: "build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
           folderId: ${{ secrets.DRIVEFOLDERID }}
           name: "Finance Master Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
           overwrite: "true"
@@ -104,10 +112,11 @@ jobs:
           git commit -m "Increment version to ${{ steps.increment_version.outputs.new_version }}"
           git push origin HEAD:${{ github.ref }}
 
+
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/apk/release/Finance_Master_Pro,build/ios/iphoneos/app.ipa"
+          artifacts: "build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk,build/ios/iphoneos/app.ipa"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.GH_PAT }}
 
@@ -124,14 +133,11 @@ jobs:
           SLACK_CHANNEL: "#finance-master-pro"
           SLACK_ICON: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQIdeZ1MahCe2snsur1xczoHnlPx6ENMuJH6UDWWhNYjIfAQyuj"
 
-      - name: Install requests
-        run: pip install requests
-
       - name: Upload APK and Send Telegram Message
         run: python send_telegram_message.py
         env:
-           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-           TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
-           MESSAGE: ${{ env.MESSAGE }}
-           APK_FILE_PATH: build/app/outputs/apk/release/app-release.apk
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
+          MESSAGE: "New Version of Finance Master Pro is available. Download Now: [Download the APK](https://drive.google.com/drive/folders/1k51cCnURx-V04zzyrerRMDSo-YCWrKEP?usp=sharing)"
+          APK_FILE_PATH: build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
