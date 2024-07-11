@@ -144,7 +144,6 @@ jobs:
           SLACK_CHANNEL: "#finance-master-pro"
           SLACK_ICON: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQIdeZ1MahCe2snsur1xczoHnlPx6ENMuJH6UDWWhNYjIfAQyuj"
 
-
       - name: Upload APK and Send Telegram Message
         run: python send_telegram_message.py
         env:
