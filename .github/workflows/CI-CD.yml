@@ -122,14 +122,11 @@ jobs:
 
 
       - name: Upload APK to Slack
-        run: |
-          curl -F file=@build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk \
-               -F "initial_comment=New version of Finance Master Pro is available!" \
-               -F channels=#finance-master-pro \
-               -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
-               https://slack.com/api/files.upload
+        run: python upload_to_slack.py
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: finance_master_pro
+          APK_FILE_PATH: build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
 
 
       - name: Notify on Slack with APK
