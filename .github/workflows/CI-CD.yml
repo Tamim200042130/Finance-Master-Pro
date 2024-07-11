@@ -127,9 +127,9 @@ jobs:
       - name: Upload APK to Slack
         run: python upload_to_slack.py
         env:
-            SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-            SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL_ID }}
-            APK_FILE_PATH: build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL_ID }}
+          APK_FILE_PATH: build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
 
 
       - name: Notify on Slack with APK
