@@ -136,7 +136,7 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_USERNAME: Mohammad Tamim Ibn Hossain
+          SLACK_USERNAME: Finance Master Pro
           SLACK_TITLE: "🎉🎉 New Release Available 🎉🎉"
           SLACK_MESSAGE: |
             A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
@@ -150,7 +150,7 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
-          MESSAGE: "New Version of Finance Master Pro is available. Download Now: [Download the APK](https://drive.google.com/drive/folders/1k51cCnURx-V04zzyrerRMDSo-YCWrKEP?usp=sharing)"
+          MESSAGE: "New Version of Finance Master Pro is available."
           APK_FILE_PATH: build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
 
 #      - name: Upload APK to Firebase App Distribution
@@ -186,19 +186,19 @@ jobs:
 #          tag: v${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
 #          token: ${{ secrets.GH_PAT }}
 #
-#      - name: Upload APK to Google Play Console
-#        uses: r0adkll/upload-google-play@v1
-#        with:
-#          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_JSON }}
-#          packageName: "com.tamimibnhossain.financemasterpro"
-#          releaseFile: "build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
-#          track: "internal"
-#          releaseName: "Finance Master Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
-#          whatsNew: "New Version of Finance Master Pro is available. Download Now: [Download the APK](https://drive.google.com/drive/folders/1k51cCnURx-V04zzyrerRMDSo-YCWrKEP?usp=sharing)"
-#          releaseNotesFile: "build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
-#          userFraction: "0.1"
-#          releaseStatus: "draft"
-#          consoleTimeout: 600000
+      - name: Upload APK to Google Play Console
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_JSON }}
+          packageName: "com.tamimibnhossain.financemasterpro"
+          releaseFile: "build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
+          track: "internal"
+          releaseName: "Finance Master Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
+          whatsNew: "New Version of Finance Master Pro is available. 
+          releaseNotesFile: "build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
+          userFraction: "0.1"
+          releaseStatus: "draft"
+          consoleTimeout: 600000
 #
 #      - name: Upload APK to Amazon App Store
 #        uses: r0adkll/upload-amazon-app-store@v1
