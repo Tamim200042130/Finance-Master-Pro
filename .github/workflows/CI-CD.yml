@@ -67,6 +67,9 @@ jobs:
       - name: Install requests
         run: pip install requests
 
+      - name: Install slack-sdk
+        run: pip install slack-sdk
+
       - name: Delete Existing Files from Google Drive
         env:
           FOLDER_ID: ${{ secrets.DRIVEFOLDERID }}

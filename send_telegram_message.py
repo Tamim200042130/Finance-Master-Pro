@@ -8,7 +8,6 @@ TELEGRAM_THREAD_ID = os.getenv('TELEGRAM_THREAD_ID')
 MESSAGE = os.getenv('MESSAGE')
 APK_FILE_PATH = os.getenv('APK_FILE_PATH')
 
-# Upload APK file to Telegram
 url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendDocument"
 files = {'document': open(APK_FILE_PATH, 'rb')}
 data = {
@@ -26,7 +25,7 @@ if response.status_code == 200:
     data = {
         "chat_id": TELEGRAM_CHAT_ID,
         "message_thread_id": TELEGRAM_THREAD_ID,
-        # "text": f"{MESSAGE}\nDownload Now: {document_link}",
+        "text": f"{MESSAGE}",
     }
 
     response = requests.post(url, data=data)
