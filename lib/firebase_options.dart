@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -72,10 +69,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCxXT2UxCqWiA1lULKyy9nfGFHE8DK_t3k',
-    appId: '1:769139300588:ios:b6ebdd26d66d8b19e0adc9',
+    appId: '1:769139300588:ios:6898064769f1100ae0adc9',
     messagingSenderId: '769139300588',
     projectId: 'finance-master-pro-78d25',
     storageBucket: 'finance-master-pro-78d25.appspot.com',
-    iosBundleId: 'com.example.financeMasterPro.RunnerTests',
+    iosBundleId: 'com.example.financeMasterPro',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCFRjHHZloeJoNF5ueAXsT6lLaKZqneLrk',
+    appId: '1:769139300588:web:257779f2ac894beee0adc9',
+    messagingSenderId: '769139300588',
+    projectId: 'finance-master-pro-78d25',
+    authDomain: 'finance-master-pro-78d25.firebaseapp.com',
+    storageBucket: 'finance-master-pro-78d25.appspot.com',
+    measurementId: 'G-2G041PDC7E',
+  );
+
 }

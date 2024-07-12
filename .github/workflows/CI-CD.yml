@@ -60,6 +60,9 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Update pubspec.yaml version
+        run: python update_pubspec_version.py
+
       - name: Install Google API Client
         run: pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
@@ -85,7 +88,6 @@ jobs:
         run: |
           mv build/app/outputs/apk/release/app-release.apk build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
 
-
       - name: Archive Files
         run: |
           sudo apt-get update
@@ -110,10 +112,9 @@ jobs:
 
       - name: Commit Updated Version
         run: |
-          git add version.txt
+          git add version.txt pubspec.yaml
           git commit -m "Increment version to ${{ steps.increment_version.outputs.new_version }}"
           git push origin HEAD:${{ github.ref }}
-
 
       - name: Push to Releases
         uses: ncipollo/release-action@v1
@@ -122,14 +123,12 @@ jobs:
           tag: v${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
           token: ${{ secrets.GH_PAT }}
 
-
       - name: Upload APK to Slack
         run: python upload_to_slack.py
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL_ID }}
           APK_FILE_PATH: build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
-
 
       - name: Notify on Slack with APK
         uses: rtCamp/action-slack-notify@v2
@@ -149,22 +148,23 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
-          MESSAGE: "New Version of Finance Master Pro is available."
+          MESSAGE: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
           APK_FILE_PATH: build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
 
 
-
-#      - name: Upload APK to Google Play Console
-#        uses: r0adkll/upload-google-play@v1
-#        with:
-#          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_JSON }}
-#          packageName: "com.tamimibnhossain.financemasterpro"
-#          releaseFile: "build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
-#          track: "internal"
-#          releaseName: "Finance Master Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
-#          whatsNew: "New Version of Finance Master Pro is available.
-#          releaseNotesFile: "build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
-#          userFraction: "0.1"
-#          releaseStatus: "draft"
-#          consoleTimeout: 600000
+#      - name: Notify on WhatsApp
+#        run: python send_whatsapp_message.py
+#        env:
+#          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+#          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+#          TWILIO_PHONE_NUMBER: ${{ secrets.TWILIO_PHONE_NUMBER }}
+#          PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+#          MESSAGE: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
 #
+#      - name: Notify on Messenger
+#        run: python send_messenger_message.py
+#        env:
+#          PAGE_ACCESS_TOKEN: ${{ secrets.PAGE_ACCESS_TOKEN }}
+#          MESSAGE: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
+#          USER_ID: ${{ secrets.USER_ID }}
+
