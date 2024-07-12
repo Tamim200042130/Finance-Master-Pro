@@ -52,18 +52,31 @@ class _DashboardState extends State<Dashboard> {
   }
 
   bool _isUpdateRequired(String currentVersion, String requiredVersion) {
-    final currentParts = currentVersion.split('.').map(int.parse).toList();
-    final requiredParts = requiredVersion.split('.').map(int.parse).toList();
+    // Split version strings into integer parts
+    final currentParts = currentVersion.split('.').map((part) => int.parse(part)).toList();
+    final requiredParts = requiredVersion.split('.').map((part) => int.parse(part)).toList();
 
+    // Pad shorter version with zeros to ensure equal length
+    while (currentParts.length < requiredParts.length) {
+      currentParts.add(0);
+    }
+    while (requiredParts.length < currentParts.length) {
+      requiredParts.add(0);
+    }
+
+    // Compare each segment of the version number
     for (int i = 0; i < requiredParts.length; i++) {
-      if (currentParts.length <= i || currentParts[i] < requiredParts[i]) {
-        return true;
+      if (currentParts[i] < requiredParts[i]) {
+        return true; // Update required if current version part is less than required version part
       } else if (currentParts[i] > requiredParts[i]) {
-        return false;
+        return false; // No update required if current version part is greater
       }
     }
+
+    // No update required if versions are equal
     return false;
   }
+
 
   void _showUpdateDialog() {
     showDialog(
