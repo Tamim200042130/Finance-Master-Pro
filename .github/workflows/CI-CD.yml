@@ -108,6 +108,18 @@ jobs:
           overwrite: "true"
           mimeType: "application/vnd.android.package-archive"
 
+      - name: Delay Execution
+        id: delay
+        run: sleep 900  # Sleep for 900 seconds (15 minutes)
+        if: success()  # Only run if upload was successful
+
+      - name: Fetch Latest APK URL
+        id: fetch_apk_url
+        run: python fetch_latest_apk_url.py
+        env:
+          CREDENTIALS: ${{ secrets.CREDENTIALS }}
+          DRIVEFOLDERID: ${{ secrets.DRIVEFOLDERID }}
+
       - name: Configure Git
         run: |
           git config --global user.email "actions@github.com"
@@ -125,14 +137,6 @@ jobs:
           artifacts: "build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk,build/ios/iphoneos/app.ipa"
           tag: v${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
           token: ${{ secrets.GH_PAT }}
-
-#      - name: Fetch Latest APK URL
-#        if: success()  # Only run if previous steps were successful
-#        id: fetch_apk_url
-#        run: python fetch_latest_apk_url.py
-#        env:
-#          CREDENTIALS: ${{ secrets.CREDENTIALS }}
-#          DRIVEFOLDERID: ${{ secrets.DRIVEFOLDERID }}
 
       - name: Upload APK to Slack
         run: python upload_to_slack.py
@@ -153,6 +157,12 @@ jobs:
           SLACK_CHANNEL: "#finance-master-pro"
           SLACK_ICON: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQIdeZ1MahCe2snsur1xczoHnlPx6ENMuJH6UDWWhNYjIfAQyuj"
 
+      - name: Update Firebase Remote Config
+        run: python update_firebase_remote_config.py
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          APK_URL: ${{ steps.fetch_apk_url.outputs.apk_url }}
+
       - name: Upload APK and Send Telegram Message
         run: python send_telegram_message.py
         env:
@@ -162,25 +172,6 @@ jobs:
           MESSAGE: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
           APK_FILE_PATH: build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
 
-      - name: Delay Execution
-        id: delay
-        run: sleep 900
-        if: success()
-
-      - name: Fetch Latest APK URL
-        if: success()
-        id: fetch_apk_url
-        run: python fetch_latest_apk_url.py
-        env:
-          CREDENTIALS: ${{ secrets.CREDENTIALS }}
-          DRIVEFOLDERID: ${{ secrets.DRIVEFOLDERID}}
-
-      - name: Update Firebase Remote Config
-        if: success()
-        run: python update_firebase_remote_config.py
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          APK_URL: ${{ steps.fetch_apk_url.outputs.apk_url }}
 
 # Uncomment and modify the following steps as needed:
 #      - name: Notify on WhatsApp

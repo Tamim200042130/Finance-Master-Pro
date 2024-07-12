@@ -4,35 +4,44 @@ import json
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
-# Decode base64-encoded credentials from GitHub Secrets
-base64_credentials = os.getenv('CREDENTIALS')
-json_credentials = json.loads(base64.b64decode(base64_credentials).decode('utf-8'))
+def main():
+    # Load credentials from environment variable
+    credentials_base64 = os.getenv('CREDENTIALS')
+    folder_id = os.getenv('DRIVEFOLDERID')
 
-# Initialize credentials from the decoded JSON
-credentials = service_account.Credentials.from_service_account_info(json_credentials)
+    if not credentials_base64:
+        raise ValueError("CREDENTIALS environment variable is missing.")
 
-# Initialize the Drive service
-drive_service = build('drive', 'v3', credentials=credentials)
+    if not folder_id:
+        raise ValueError("DRIVEFOLDERID environment variable is missing.")
 
-# Function to fetch the latest APK URL from Google Drive
-def get_latest_apk_url(folder_id):
-    # Query parameters to get the latest file from the folder
-    query = f"'{folder_id}' in parents and mimeType='application/vnd.android.package-archive'"
-    files = drive_service.files().list(q=query, orderBy='createdTime desc', pageSize=1).execute()
+    credentials_json = base64.b64decode(credentials_base64).decode('utf-8')
+    credentials_dict = json.loads(credentials_json)
 
-    # Extract the webContentLink from the latest file
-    latest_file = files.get('files')[0] if 'files' in files and len(files.get('files')) > 0 else None
-    if latest_file:
-        return latest_file.get('webContentLink')
-    else:
-        return None
+    # Authenticate and build the Drive API client
+    credentials = service_account.Credentials.from_service_account_info(credentials_dict)
+    service = build('drive', 'v3', credentials=credentials)
 
-# Retrieve the Google Drive folder ID from GitHub Secrets
-folder_id = os.getenv('DRIVEFOLDERID')
+    # Query the files in the specified folder
+    try:
+        results = service.files().list(
+            q=f"'{folder_id}' in parents and name contains 'Finance Master Pro' and mimeType='application/vnd.android.package-archive'",
+            fields="nextPageToken, files(id, name, webViewLink)",
+            pageSize=10
+        ).execute()
 
-# Example usage
-latest_apk_url = get_latest_apk_url(folder_id)
-if latest_apk_url:
-    print("Latest APK URL:", latest_apk_url)
-else:
-    print("No APK found in the specified folder.")
+        files = results.get('files', [])
+
+        if not files:
+            print('No APK files found in the specified folder.')
+            return
+
+        # Assuming the latest file is the most recently uploaded one
+        latest_file = sorted(files, key=lambda x: x['name'], reverse=True)[0]
+        print(f"Latest APK URL: {latest_file['webViewLink']}")
+
+    except Exception as e:
+        print(f"Error fetching APK URL: {e}")
+
+if __name__ == '__main__':
+    main()
