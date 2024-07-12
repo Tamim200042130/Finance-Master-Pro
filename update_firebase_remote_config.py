@@ -48,16 +48,21 @@ def main():
     if not etag:
         raise ValueError("ETag not found in the response headers")
 
-    # Print fetched Remote Config for debugging
-    print("Fetched Remote Config:", json.dumps(remote_config, indent=2))
-    print("ETag:", etag)
+    # Read current version from version.txt file
+    with open('version.txt', 'r') as f:
+        current_version = f.read().strip()
 
-    # Update the remote config with the new APK URL
+    # Update the remote config with the new APK URL and current version
     remote_config_data = {
         "parameters": {
             "latest_apk_url": {
                 "defaultValue": {
                     "value": "Latest APK URL: https://drive.google.com/file/d/1pT5uAKtDCPw8EGN_c7vQOua7EkcWxiMi/view?usp=drivesdk"
+                }
+            },
+            "minimum_required_version": {
+                "defaultValue": {
+                    "value": current_version
                 }
             }
         }
