@@ -22,7 +22,7 @@ class _DashboardState extends State<Dashboard> {
   int currentIndex = 0;
   var pageViewList = [HomeScreen(), TransactionScreen(), UserProfilePage()];
 
-  String latestApkUrl = ''; // Holds the latest APK URL
+  String latestApkUrl = '';
 
   @override
   void initState() {
@@ -56,7 +56,6 @@ class _DashboardState extends State<Dashboard> {
     final currentParts = currentVersion.split('.').map((part) => int.parse(part)).toList();
     final requiredParts = requiredVersion.split('.').map((part) => int.parse(part)).toList();
 
-    // Pad shorter version with zeros to ensure equal length
     while (currentParts.length < requiredParts.length) {
       currentParts.add(0);
     }
@@ -64,19 +63,16 @@ class _DashboardState extends State<Dashboard> {
       requiredParts.add(0);
     }
 
-    // Compare each segment of the version number
     for (int i = 0; i < requiredParts.length; i++) {
       if (currentParts[i] < requiredParts[i]) {
-        return true; // Update required if current version part is less than required version part
+        return true;
       } else if (currentParts[i] > requiredParts[i]) {
-        return false; // No update required if current version part is greater
+        return false;
       }
     }
 
-    // No update required if versions are equal
     return false;
   }
-
 
   void _showUpdateDialog() {
     showDialog(
@@ -95,13 +91,17 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  void _redirectToUpdate() {
-    if (latestApkUrl.isNotEmpty) {
-      launch(latestApkUrl); // Launch the latest APK URL using url_launcher
+  void _redirectToUpdate() async {
+    final url = latestApkUrl.isNotEmpty ? latestApkUrl : 'https://drive.google.com/drive/folders/1k51cCnURx-V04zzyrerRMDSo-YCWrKEP?usp=sharing';
+
+    if (await canLaunch(url)) {
+      print('Launching URL: $url');
+      await launch(url);
     } else {
-      // Fallback if URL is empty or not available
-      final defaultUrl = 'https://drive.google.com/drive/folders/1k51cCnURx-V04zzyrerRMDSo-YCWrKEP?usp=sharing'; // Provide a default URL
-      launch(defaultUrl); // Launch the default URL
+      print('Could not launch URL: $url');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch update URL')),
+      );
     }
   }
 
