@@ -8,7 +8,6 @@ from google.oauth2 import service_account
 
 
 def main():
-    # Load service account credentials
     firebase_service_account_b64 = os.getenv('FIREBASE_SERVICE_ACCOUNT')
 
     if not firebase_service_account_b64:
