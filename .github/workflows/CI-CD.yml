@@ -115,7 +115,9 @@ jobs:
 
       - name: Fetch Latest APK URL
         id: fetch_apk_url
-        run: python fetch_latest_apk_url.py
+        run: |
+          apk_url=$(python fetch_latest_apk_url.py)
+          echo "apk_url=$apk_url" >> $GITHUB_OUTPUT
         env:
           CREDENTIALS: ${{ secrets.CREDENTIALS }}
           DRIVEFOLDERID: ${{ secrets.DRIVEFOLDERID }}

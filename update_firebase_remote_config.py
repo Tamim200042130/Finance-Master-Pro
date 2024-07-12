@@ -1,44 +1,42 @@
-import firebase_admin
-from firebase_admin import credentials, firestore, initialize_app
-import base64
 import os
+import json
+import firebase_admin
+from firebase_admin import credentials, remote_config
 
-# Fetch the Firebase service account credentials from environment variables
-firebase_credentials_base64 = os.getenv('FIREBASE_SERVICE_ACCOUNT_JSON')
-
-print(firebase_credentials_base64)  # Add this line for debugging
-
-# Decode the base64-encoded JSON and save it to a temporary file
-temp_credentials_path = '/tmp/firebase_credentials.json'
-
-if firebase_credentials_base64:
-    with open(temp_credentials_path, 'wb') as f:
-        f.write(base64.b64decode(firebase_credentials_base64))
-else:
-    print("Error: FIREBASE_SERVICE_ACCOUNT_JSON environment variable not set or empty.")
-
-# Initialize Firebase with the credentials
-if os.path.exists(temp_credentials_path):
-    cred = credentials.Certificate(temp_credentials_path)
-    initialize_app(cred)
-
-    # Access Firestore database
-    db = firestore.client()
-
-    # Update remote config parameters
-    def update_remote_config(apk_url):
-        remote_config = db.collection('remoteConfig').document('parameters')
-
-        remote_config.set({
-            'latest_apk_url': apk_url
-        }, merge=True)
-
-    # Fetch APK URL from environment variables or arguments
+def main():
+    firebase_service_account_json = os.getenv('FIREBASE_SERVICE_ACCOUNT')
     apk_url = os.getenv('APK_URL')
 
-    # Update Firebase Remote Config
-    update_remote_config(apk_url)
+    if not firebase_service_account_json:
+        raise ValueError("FIREBASE_SERVICE_ACCOUNT environment variable not set or empty.")
 
-    print("Firebase Remote Config updated successfully!")
-else:
-    print(f"Error: Temporary credentials file '{temp_credentials_path}' not found.")
+    if not apk_url:
+        raise ValueError("APK_URL environment variable not set or empty.")
+
+    # Write the service account JSON to a temporary file
+    temp_credentials_path = '/tmp/firebase_credentials.json'
+    with open(temp_credentials_path, 'w') as f:
+        f.write(firebase_service_account_json)
+
+    # Initialize the Firebase app
+    cred = credentials.Certificate(temp_credentials_path)
+    firebase_admin.initialize_app(cred)
+
+    # Create a new Remote Config parameter and set its value
+    parameters = {
+        'latest_apk_url': remote_config.Parameter(
+            apk_url,
+            remote_config.ParameterValueType.STRING
+        )
+    }
+
+    # Create the Remote Config template
+    template = remote_config.Template(parameters=parameters)
+
+    # Publish the template to Firebase Remote Config
+    remote_config.publish_template(template)
+
+    print(f'Successfully updated Firebase Remote Config with APK URL: {apk_url}')
+
+if __name__ == '__main__':
+    main()
