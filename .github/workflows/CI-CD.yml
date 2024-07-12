@@ -126,13 +126,13 @@ jobs:
           tag: v${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
           token: ${{ secrets.GH_PAT }}
 
-      - name: Fetch Latest APK URL
-        if: success()  # Only run if previous steps were successful
-        id: fetch_apk_url
-        run: python fetch_latest_apk_url.py
-        env:
-          CREDENTIALS: ${{ secrets.CREDENTIALS }}
-          DRIVEFOLDERID: ${{ secrets.DRIVEFOLDERID }}
+#      - name: Fetch Latest APK URL
+#        if: success()  # Only run if previous steps were successful
+#        id: fetch_apk_url
+#        run: python fetch_latest_apk_url.py
+#        env:
+#          CREDENTIALS: ${{ secrets.CREDENTIALS }}
+#          DRIVEFOLDERID: ${{ secrets.DRIVEFOLDERID }}
 
       - name: Upload APK to Slack
         run: python upload_to_slack.py
@@ -169,6 +169,19 @@ jobs:
           TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
           MESSAGE: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
           APK_FILE_PATH: build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+
+      - name: Delay Execution
+        id: delay
+        run: sleep 900  # Sleep for 900 seconds (15 minutes)
+        if: success()  # Only run if upload was successful
+
+      - name: Fetch Latest APK URL
+        if: success()  # Only run if previous steps were successful and delay is complete
+        id: fetch_apk_url
+        run: python fetch_latest_apk_url.py
+        env:
+          CREDENTIALS: ${{ secrets.CREDENTIALS }}
+          DRIVEFOLDERID: ${{ secrets.DRIVEFOLDERID}}
 
 # Uncomment and modify the following steps as needed:
 #      - name: Notify on WhatsApp
