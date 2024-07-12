@@ -43,10 +43,28 @@ def main():
 
     firebase_remote_config_url = f"https://firebaseremoteconfig.googleapis.com/v1/projects/{firebase_project_id}/remoteConfig"
 
+    # Define headers for fetching the current template
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+
+    # Fetch the current Remote Config template to get the ETag
+    fetch_response = requests.get(firebase_remote_config_url, headers=headers)
+    if fetch_response.status_code != 200:
+        print(f"Error fetching remote config: {fetch_response.status_code}")
+        print(fetch_response.text)
+        fetch_response.raise_for_status()
+
+    etag = fetch_response.headers.get('ETag')
+    if not etag:
+        raise ValueError("ETag not found in the response headers.")
+
     # Define headers and data for Remote Config update
     remote_config_headers = {
         "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "If-Match": etag
     }
 
     remote_config_data = {
