@@ -1,9 +1,11 @@
-import os
-import json
 import base64
+import json
+import os
+
 import requests
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
+
 
 def main():
     # Load service account credentials
@@ -48,16 +50,18 @@ def main():
     if not etag:
         raise ValueError("ETag not found in the response headers")
 
-    # Read current version from version.txt file
     with open('version.txt', 'r') as f:
         current_version = f.read().strip()
+
+    # Example: Fetching the APK URL dynamically from workflow output or another source
+    apk_url = os.getenv('APK_URL')  # Replace with actual method of fetching APK URL
 
     # Update the remote config with the new APK URL and current version
     remote_config_data = {
         "parameters": {
             "latest_apk_url": {
                 "defaultValue": {
-                    "value": "Latest APK URL: https://drive.google.com/file/d/1pT5uAKtDCPw8EGN_c7vQOua7EkcWxiMi/view?usp=drivesdk"
+                    "value": apk_url
                 }
             },
             "minimum_required_version": {
@@ -76,12 +80,14 @@ def main():
     }
 
     # Update the Remote Config template
-    update_response = requests.put(firebase_remote_config_url, headers=update_headers, json=remote_config_data)
+    update_response = requests.put(firebase_remote_config_url, headers=update_headers,
+                                   json=remote_config_data)
     update_response.raise_for_status()
 
     # Print the update response for debugging
     print("Update Response Status Code:", update_response.status_code)
     print("Update Response Text:", update_response.text)
+
 
 if __name__ == "__main__":
     main()
