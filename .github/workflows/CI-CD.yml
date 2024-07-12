@@ -108,10 +108,10 @@ jobs:
           overwrite: "true"
           mimeType: "application/vnd.android.package-archive"
 
-      - name: Delay Execution
-        id: delay
-        run: sleep 900  # Sleep for 900 seconds (15 minutes)
-        if: success()  # Only run if upload was successful
+#      - name: Delay Execution
+#        id: delay
+#        run: sleep 900  # Sleep for 900 seconds (15 minutes)
+#        if: success()  # Only run if upload was successful
 
       - name: Fetch Latest APK URL
         id: fetch_apk_url
