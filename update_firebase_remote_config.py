@@ -1,7 +1,7 @@
 import os
 import json
 import base64
-import google.auth
+import requests
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 

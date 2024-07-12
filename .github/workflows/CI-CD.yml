@@ -64,7 +64,7 @@ jobs:
         run: python update_pubspec_version.py
 
       - name: Install Google API Client
-        run: pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib google-auth
+        run: pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib google-auth requests
 
       - name: Install Firebase Admin SDK
         run: pip install --upgrade firebase-admin
