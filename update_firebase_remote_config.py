@@ -12,6 +12,9 @@ def main():
     if not apk_url:
         raise ValueError("APK_URL environment variable not set or empty.")
 
+    # Debugging: Print the first few characters of the service account JSON
+    print(f"FIREBASE_SERVICE_ACCOUNT (first 100 chars): {firebase_service_account_json[:100]}")
+
     # Decode service account credentials
     try:
         firebase_service_account = json.loads(firebase_service_account_json)

@@ -110,7 +110,7 @@ jobs:
 
       - name: Delay Execution
         id: delay
-        run: sleep 120  # Sleep for 900 seconds (15 minutes)
+        run: sleep 900  # Sleep for 900 seconds (15 minutes)
         if: success()  # Only run if upload was successful
 
       - name: Fetch Latest APK URL
@@ -124,6 +124,7 @@ jobs:
 
       - name: Debug Firebase Service Account
         run: |
+          echo "Content of FIREBASE_SERVICE_ACCOUNT: ${FIREBASE_SERVICE_ACCOUNT}"
           echo "Length of FIREBASE_SERVICE_ACCOUNT: ${#FIREBASE_SERVICE_ACCOUNT}"
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
