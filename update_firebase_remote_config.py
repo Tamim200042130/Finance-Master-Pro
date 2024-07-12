@@ -6,27 +6,17 @@ from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 
 def main():
+    # Load service account credentials
     firebase_service_account_b64 = os.getenv('FIREBASE_SERVICE_ACCOUNT')
-    apk_url = os.getenv('APK_URL')
 
     if not firebase_service_account_b64:
         raise ValueError("FIREBASE_SERVICE_ACCOUNT environment variable not set or empty.")
 
-    if not apk_url:
-        raise ValueError("APK_URL environment variable not set or empty.")
-
     # Decode the base64 encoded service account JSON
     firebase_service_account_json = base64.b64decode(firebase_service_account_b64).decode('utf-8')
 
-    # Debugging: Print the first few characters of the service account JSON
-    print(f"FIREBASE_SERVICE_ACCOUNT (first 100 chars): {firebase_service_account_json[:100]}")
-
     # Load service account credentials
-    try:
-        firebase_service_account_info = json.loads(firebase_service_account_json)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Error decoding FIREBASE_SERVICE_ACCOUNT JSON: {e}")
-
+    firebase_service_account_info = json.loads(firebase_service_account_json)
     credentials = service_account.Credentials.from_service_account_info(
         firebase_service_account_info,
         scopes=["https://www.googleapis.com/auth/firebase.remoteconfig"]
@@ -38,9 +28,6 @@ def main():
 
     # Construct Firebase Remote Config URL
     firebase_project_id = firebase_service_account_info.get('project_id')
-    if not firebase_project_id:
-        raise ValueError("Firebase project_id not found in service account JSON.")
-
     firebase_remote_config_url = f"https://firebaseremoteconfig.googleapis.com/v1/projects/{firebase_project_id}/remoteConfig"
 
     # Define headers for fetching the current template
@@ -49,48 +36,47 @@ def main():
         "Content-Type": "application/json"
     }
 
-    # Fetch the current Remote Config template to get the ETag
+    # Fetch the current Remote Config template
     fetch_response = requests.get(firebase_remote_config_url, headers=headers)
-    if fetch_response.status_code != 200:
-        print(f"Error fetching remote config: {fetch_response.status_code}")
-        print(fetch_response.text)
-        fetch_response.raise_for_status()
+    fetch_response.raise_for_status()
 
+    remote_config = fetch_response.json()
+
+    # Extract the latest ETag
     etag = fetch_response.headers.get('ETag')
+
     if not etag:
-        raise ValueError("ETag not found in the response headers.")
+        raise ValueError("ETag not found in the response headers")
 
-    # Define headers and data for Remote Config update
-    remote_config_headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json",
-        "If-Match": etag
-    }
+    # Print fetched Remote Config for debugging
+    print("Fetched Remote Config:", json.dumps(remote_config, indent=2))
+    print("ETag:", etag)
 
+    # Update the remote config with the new APK URL
     remote_config_data = {
         "parameters": {
             "latest_apk_url": {
                 "defaultValue": {
-                    "value": apk_url
+                    "value": "Latest APK URL: https://drive.google.com/file/d/1pT5uAKtDCPw8EGN_c7vQOua7EkcWxiMi/view?usp=drivesdk"
                 }
             }
         }
     }
 
-    # Send update request to Firebase Remote Config
-    response = requests.put(firebase_remote_config_url, headers=remote_config_headers, json=remote_config_data)
+    # Define headers for updating the template
+    update_headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+        "If-Match": etag
+    }
 
-    # Log response details for debugging
-    print(f"Request URL: {firebase_remote_config_url}")
-    print(f"Request Headers: {remote_config_headers}")
-    print(f"Request Body: {json.dumps(remote_config_data, indent=2)}")
-    print(f"Response Status Code: {response.status_code}")
-    print(f"Response Text: {response.text}")
+    # Update the Remote Config template
+    update_response = requests.put(firebase_remote_config_url, headers=update_headers, json=remote_config_data)
+    update_response.raise_for_status()
 
-    # Raise an error for bad responses
-    response.raise_for_status()
-
-    print("Firebase Remote Config updated successfully.")
+    # Print the update response for debugging
+    print("Update Response Status Code:", update_response.status_code)
+    print("Update Response Text:", update_response.text)
 
 if __name__ == "__main__":
     main()
