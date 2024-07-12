@@ -61,6 +61,15 @@ def main():
 
     # Send update request to Firebase Remote Config
     response = requests.put(firebase_remote_config_url, headers=remote_config_headers, json=remote_config_data)
+
+    # Log response details for debugging
+    print(f"Request URL: {firebase_remote_config_url}")
+    print(f"Request Headers: {remote_config_headers}")
+    print(f"Request Body: {json.dumps(remote_config_data, indent=2)}")
+    print(f"Response Status Code: {response.status_code}")
+    print(f"Response Text: {response.text}")
+
+    # Raise an error for bad responses
     response.raise_for_status()
 
     print("Firebase Remote Config updated successfully.")
