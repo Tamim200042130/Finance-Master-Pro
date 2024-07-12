@@ -94,16 +94,26 @@ class _DashboardState extends State<Dashboard> {
   void _redirectToUpdate() async {
     final url = latestApkUrl.isNotEmpty ? latestApkUrl : 'https://drive.google.com/drive/folders/1k51cCnURx-V04zzyrerRMDSo-YCWrKEP?usp=sharing';
 
-    if (await canLaunch(url)) {
-      print('Launching URL: $url');
-      await launch(url);
+    if (!url.startsWith('http')) {
+      print('Invalid URL: $url');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid update URL')),
+      );
+      return;
+    }
+
+    final encodedUrl = Uri.encodeFull(url);
+    if (await canLaunch(encodedUrl)) {
+      print('Launching URL: $encodedUrl');
+      await launch(encodedUrl, forceSafariVC: false, forceWebView: false);
     } else {
-      print('Could not launch URL: $url');
+      print('Could not launch URL: $encodedUrl');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Could not launch update URL')),
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
