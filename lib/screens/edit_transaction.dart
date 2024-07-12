@@ -23,13 +23,18 @@ class _EditTransactionState extends State<EditTransaction> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   var amountEditingController = TextEditingController();
   var titleEditingController = TextEditingController();
+  var typeEditingController = TextEditingController();
   var category = 'Tuition Salary';
+  var type = 'Income';
+  int timestamp = DateTime.now().millisecondsSinceEpoch;
 
   @override
   void initState() {
     super.initState();
     titleEditingController.text = widget.transactionData['title'];
     category = widget.transactionData['category'];
+    amountEditingController.text = widget.transactionData['amount'].toString();
+    type = widget.transactionData['type'];
   }
 
   Future<void> _submitForm() async {
@@ -42,6 +47,8 @@ class _EditTransactionState extends State<EditTransaction> {
       final transactionId = widget.transactionData['id'];
       final updatedTitle = titleEditingController.text;
       final updatedCategory = category;
+      final updatedAmount = amountEditingController.text;
+      final updatedType = type;
 
       try {
         final userDocSnapshot = await FirebaseFirestore.instance
@@ -53,6 +60,36 @@ class _EditTransactionState extends State<EditTransaction> {
           throw Exception("User document does not exist");
         }
 
+        int totalIncome = userDocSnapshot['totalIncome'] ?? 0;
+        int totalExpense = userDocSnapshot['totalExpense'] ?? 0;
+        int remainingAmount = userDocSnapshot['remainingAmount'] ?? 0;
+
+        // Convert the original amount to an integer
+        double originalAmountDouble = double.parse(widget.transactionData['amount'].toString());
+        int originalAmount = originalAmountDouble.toInt();
+
+        // Convert the updated amount to an integer
+        double newAmountDouble = double.parse(updatedAmount);
+        int newAmount = newAmountDouble.toInt();
+
+        // Undo the original amount based on the original type
+        if (widget.transactionData['type'] == 'Income') {
+          totalIncome -= originalAmount;
+          remainingAmount -= originalAmount;
+        } else {
+          totalExpense -= originalAmount;
+          remainingAmount += originalAmount;
+        }
+
+        // Apply the new amount based on the updated type
+        if (updatedType == 'Income') {
+          totalIncome += newAmount;
+          remainingAmount += newAmount;
+        } else {
+          totalExpense += newAmount;
+          remainingAmount -= newAmount;
+        }
+
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
@@ -61,13 +98,20 @@ class _EditTransactionState extends State<EditTransaction> {
             .update({
           'title': updatedTitle,
           'category': updatedCategory,
+          'amount': newAmountDouble, // Store the updated amount as double
+          'type': updatedType,
         });
+
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .update({
-          'updatedAt': DateTime.now().millisecondsSinceEpoch,
+          'totalIncome': totalIncome,
+          'totalExpense': totalExpense,
+          'remainingAmount': remainingAmount,
+          'updatedAt': timestamp,
         });
+
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => Dashboard()),
         );
@@ -102,11 +146,14 @@ class _EditTransactionState extends State<EditTransaction> {
           },
         );
       }
+
       setState(() {
         isLoader = false;
       });
     }
   }
+
+
 
   Future<void> _deleteTransaction() async {
     try {
@@ -120,22 +167,29 @@ class _EditTransactionState extends State<EditTransaction> {
       if (!userDocSnapshot.exists) {
         throw Exception("User document does not exist");
       }
+
+      int totalIncome = userDocSnapshot['totalIncome'] ?? 0;
+      int totalExpense = userDocSnapshot['totalExpense'] ?? 0;
+      int remainingAmount = userDocSnapshot['remainingAmount'] ?? 0;
+
+      int originalAmount = (widget.transactionData['amount'] is int)
+          ? widget.transactionData['amount'] as int
+          : (widget.transactionData['amount'] as double).toInt();
+
+      if (widget.transactionData['type'] == 'Income') {
+        totalIncome -= originalAmount;
+        remainingAmount -= originalAmount;
+      } else {
+        totalExpense -= originalAmount;
+        remainingAmount += originalAmount;
+      }
+
       await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
           .collection('transactions')
           .doc(transactionId)
           .delete();
-      int totalIncome = userDocSnapshot['totalIncome'] ?? 0;
-      int totalExpense = userDocSnapshot['totalExpense'] ?? 0;
-      int remainingAmount = userDocSnapshot['remainingAmount'] ?? 0;
-      if (widget.transactionData['type'] == 'Income') {
-        totalIncome -= (widget.transactionData['amount'] as double).toInt();
-        remainingAmount += (widget.transactionData['amount'] as double).toInt();
-      } else {
-        totalExpense -= (widget.transactionData['amount'] as double).toInt();
-        remainingAmount += (widget.transactionData['amount'] as double).toInt();
-      }
 
       await FirebaseFirestore.instance
           .collection('users')
@@ -144,7 +198,7 @@ class _EditTransactionState extends State<EditTransaction> {
         'totalIncome': totalIncome,
         'totalExpense': totalExpense,
         'remainingAmount': remainingAmount,
-        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': timestamp,
       });
 
       Navigator.of(context).pushReplacement(
@@ -174,7 +228,7 @@ class _EditTransactionState extends State<EditTransaction> {
                 child: Text(
                   'Try Again',
                   style:
-                      TextStyle(color: Colors.yellowAccent[700], fontSize: 20),
+                  TextStyle(color: Colors.yellowAccent[700], fontSize: 20),
                 ),
               ),
             ],
@@ -280,7 +334,7 @@ class _EditTransactionState extends State<EditTransaction> {
                     keyboardType: TextInputType.text,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     decoration:
-                        _buildInputDecoration('Title', FontAwesomeIcons.pencil),
+                    _buildInputDecoration('Title', FontAwesomeIcons.pencil),
                     validator: appValidator.validateTitle,
                   ),
                   SizedBox(height: 16),
@@ -293,6 +347,85 @@ class _EditTransactionState extends State<EditTransaction> {
                         });
                       }
                     },
+                  ),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    controller: amountEditingController,
+                    style: TextStyle(color: Colors.white),
+                    keyboardType: TextInputType.number,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    decoration: _buildInputDecoration(
+                        'Amount', FontAwesomeIcons.dollarSign),
+                    validator: appValidator.validateAmount,
+                  ),
+                  SizedBox(height: 16),
+                  DropdownButtonFormField(
+                    value: type,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'Income',
+                        child: Row(
+                          children: [
+                            Icon(FontAwesomeIcons.circleArrowUp,
+                                color: Colors.lightGreenAccent),
+                            SizedBox(width: 40),
+                            // Spacer
+                            Text('Income',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                )),
+                          ],
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Expense',
+                        child: Row(
+                          children: [
+                            Icon(FontAwesomeIcons.circleArrowDown,
+                                color: Colors.redAccent),
+                            SizedBox(width: 40),
+                            // Spacer
+                            Text('Expense',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                )),
+                          ],
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          type = value.toString();
+                        });
+                      }
+                    },
+                    style: TextStyle(color: Colors.white),
+                    icon: Icon(
+                      FontAwesomeIcons.caretDown,
+                      color: Colors.yellowAccent[700],
+                      size: 20,
+                    ),
+                    iconEnabledColor: Colors.yellowAccent[700],
+                    dropdownColor: Color(0xFF252634),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Color(0xFF252634),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0x35949494)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.yellowAccent[700]!),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      labelStyle: TextStyle(color: Color(0xFF949494)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
                   SizedBox(height: 30),
                   ElevatedButton(
@@ -307,21 +440,21 @@ class _EditTransactionState extends State<EditTransaction> {
                     ),
                     child: isLoader
                         ? Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.black,
-                              ),
-                            ),
-                          )
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
                         : Text(
-                            'Save Changes',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18),
-                          ),
+                      'Save Changes',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18),
+                    ),
                   ),
                 ],
               ),

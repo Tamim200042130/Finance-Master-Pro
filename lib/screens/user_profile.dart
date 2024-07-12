@@ -255,7 +255,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             ),
                             SizedBox(height: 2),
                             SizedBox(
-                              width: 380, // Adjust the width as needed
+                              width: 380,
                               child: Center(
                                 child: Text(
                                   'Email: ${_user.email}',

@@ -60,6 +60,7 @@ class _AddTransactionState extends State<AddTransaction> {
           totalExpense += amount;
         }
 
+
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)

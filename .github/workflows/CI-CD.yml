@@ -3,8 +3,7 @@ name: build_upload_notify
 on:
   push:
     branches:
-      - main
-      - edit
+      - release
 
 jobs:
   build_upload_notify:

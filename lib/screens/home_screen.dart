@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:finance_master_pro/screens/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,7 +8,6 @@ import '../widgets/add_transaction.dart';
 import '../widgets/dissmiss_keyboard_on_tap.dart';
 import '../widgets/hero_card.dart';
 import '../widgets/transaction_cards.dart';
-import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
