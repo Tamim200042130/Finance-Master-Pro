@@ -153,15 +153,7 @@ jobs:
           SLACK_CHANNEL: "#finance-master-pro"
           SLACK_ICON: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQIdeZ1MahCe2snsur1xczoHnlPx6ENMuJH6UDWWhNYjIfAQyuj"
 
-      - name: Update Firebase Remote Config
-        if: success()  # Only run if previous steps were successful
-        run: python update_firebase_remote_config.py
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          APK_URL: ${{ steps.fetch_apk_url.outputs.apk_url }}
-
       - name: Upload APK and Send Telegram Message
-        if: success()  # Only run if previous steps were successful
         run: python send_telegram_message.py
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
@@ -172,16 +164,23 @@ jobs:
 
       - name: Delay Execution
         id: delay
-        run: sleep 900  # Sleep for 900 seconds (15 minutes)
-        if: success()  # Only run if upload was successful
+        run: sleep 900
+        if: success()
 
       - name: Fetch Latest APK URL
-        if: success()  # Only run if previous steps were successful and delay is complete
+        if: success()
         id: fetch_apk_url
         run: python fetch_latest_apk_url.py
         env:
           CREDENTIALS: ${{ secrets.CREDENTIALS }}
           DRIVEFOLDERID: ${{ secrets.DRIVEFOLDERID}}
+
+      - name: Update Firebase Remote Config
+        if: success()
+        run: python update_firebase_remote_config.py
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          APK_URL: ${{ steps.fetch_apk_url.outputs.apk_url }}
 
 # Uncomment and modify the following steps as needed:
 #      - name: Notify on WhatsApp
