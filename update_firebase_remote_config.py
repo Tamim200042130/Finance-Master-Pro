@@ -4,7 +4,10 @@ import base64
 import requests
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
-from package_info import PackageInfo  # Assuming you have a module to fetch package information
+
+def get_current_version():
+    with open('version.txt', 'r') as file:
+        return file.read().strip()
 
 def main():
     # Load service account credentials
@@ -50,8 +53,7 @@ def main():
         raise ValueError("ETag not found in the response headers")
 
     # Obtain current app version
-    package_info = PackageInfo()  # Assuming PackageInfo class fetches version info
-    current_version = package_info.version
+    current_version = get_current_version()
 
     # Get the APK URL from the environment variable
     original_apk_url = os.getenv('APK_URL')
