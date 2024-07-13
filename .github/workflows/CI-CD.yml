@@ -43,14 +43,14 @@ jobs:
           IFS='.' read -r -a version_parts <<< "$current_version"
           major=${version_parts[0]}
           minor=${version_parts[1]}
-          
+
           if [ $minor -eq 9 ]; then
             major=$((major + 1))
             minor=0
           else
             minor=$((minor + 1))
           fi
-          
+
           new_version="$major.$minor"
           echo "new_version=$new_version" >> $GITHUB_OUTPUT
           echo $new_version > version.txt
@@ -74,6 +74,9 @@ jobs:
 
       - name: Install slack-sdk
         run: pip install slack-sdk
+
+      - name: Decode Keystore
+        run: echo ${{ secrets.KEYSTORE_BASE64 }} | base64 --decode > android/app/keystore.jks
 
       - name: Delete Existing Files from Google Drive
         env:
@@ -110,7 +113,7 @@ jobs:
 
       - name: Delay Execution
         id: delay
-        run: sleep 600  # Sleep for 900 seconds (15 minutes)
+        run: sleep 240  
         if: success()  # Only run if upload was successful
 
       - name: Fetch Latest APK URL
