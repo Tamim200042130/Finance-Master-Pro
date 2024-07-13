@@ -43,7 +43,7 @@ class _DashboardState extends State<Dashboard> {
     final currentVersion = packageInfo.version;
 
     setState(() {
-      latestApkUrl = remoteConfig.getString('latest_apk_url'); // Update the latest APK URL
+      latestApkUrl = remoteConfig.getString('latest_apk_url'); 
     });
 
     if (_isUpdateRequired(currentVersion, minimumRequiredVersion)) {
