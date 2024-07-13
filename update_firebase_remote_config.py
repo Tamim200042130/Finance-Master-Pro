@@ -1,13 +1,13 @@
-import base64
-import json
 import os
-
+import json
+import base64
 import requests
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
-
+from package_info import PackageInfo  # Assuming you have a module to fetch package information
 
 def main():
+    # Load service account credentials
     firebase_service_account_b64 = os.getenv('FIREBASE_SERVICE_ACCOUNT')
 
     if not firebase_service_account_b64:
@@ -49,18 +49,28 @@ def main():
     if not etag:
         raise ValueError("ETag not found in the response headers")
 
-    with open('version.txt', 'r') as f:
-        current_version = f.read().strip()
+    # Obtain current app version
+    package_info = PackageInfo()  # Assuming PackageInfo class fetches version info
+    current_version = package_info.version
 
-    # Example: Fetching the APK URL dynamically from workflow output or another source
-    apk_url = os.getenv('APK_URL')  # Replace with actual method of fetching APK URL
+    # Get the APK URL from the environment variable
+    original_apk_url = os.getenv('APK_URL')
+
+    if not original_apk_url:
+        raise ValueError("APK_URL environment variable not set or empty.")
+
+    # Extract the file ID from the Google Drive URL
+    file_id = original_apk_url.split('/d/')[1].split('/')[0]
+
+    # Construct the direct download link
+    direct_download_link = f"https://drive.google.com/uc?export=download&id={file_id}"
 
     # Update the remote config with the new APK URL and current version
     remote_config_data = {
         "parameters": {
             "latest_apk_url": {
                 "defaultValue": {
-                    "value": apk_url
+                    "value": direct_download_link
                 }
             },
             "minimum_required_version": {
@@ -79,14 +89,12 @@ def main():
     }
 
     # Update the Remote Config template
-    update_response = requests.put(firebase_remote_config_url, headers=update_headers,
-                                   json=remote_config_data)
+    update_response = requests.put(firebase_remote_config_url, headers=update_headers, json=remote_config_data)
     update_response.raise_for_status()
 
     # Print the update response for debugging
     print("Update Response Status Code:", update_response.status_code)
     print("Update Response Text:", update_response.text)
-
 
 if __name__ == "__main__":
     main()
