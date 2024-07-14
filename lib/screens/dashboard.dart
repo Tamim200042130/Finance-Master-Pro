@@ -1,13 +1,13 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import '../widgets/navbar.dart';
 import 'home_screen.dart';
 import 'transaction_screen.dart';
 import 'user_profile.dart';
-import '../widgets/navbar.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({super.key});
@@ -42,19 +42,21 @@ class _DashboardState extends State<Dashboard> {
     final packageInfo = await PackageInfo.fromPlatform();
     final currentVersion = packageInfo.version;
 
-    setState(() {
-      latestApkUrl = remoteConfig.getString('latest_apk_url'); 
-    });
+    if (mounted) {  // Add this check
+      setState(() {
+        latestApkUrl = remoteConfig.getString('latest_apk_url');
+      });
+    }
 
     if (_isUpdateRequired(currentVersion, minimumRequiredVersion)) {
       _showUpdateDialog();
     }
   }
 
+
   bool _isUpdateRequired(String currentVersion, String requiredVersion) {
-    // Split version strings into integer parts
-    final currentParts = currentVersion.split('.').map((part) => int.parse(part)).toList();
-    final requiredParts = requiredVersion.split('.').map((part) => int.parse(part)).toList();
+    final currentParts = currentVersion.split('.').map(int.parse).toList();
+    final requiredParts = requiredVersion.split('.').map(int.parse).toList();
 
     while (currentParts.length < requiredParts.length) {
       currentParts.add(0);
@@ -79,12 +81,26 @@ class _DashboardState extends State<Dashboard> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text('Update Required'),
-        content: Text('A new version of the app is available. Please update to continue.'),
+        backgroundColor: Color(0xFF252634),
+        title: Text(
+          textAlign: TextAlign.center,
+          'Update Required',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.redAccent.shade400,
+          ),
+        ),
+        content: Text(
+          'A new version of the app is available. Please update to continue.',
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
           TextButton(
             onPressed: _redirectToUpdate,
-            child: Text('Update'),
+            child: Text(
+              'Update',
+              style: TextStyle(color: Colors.yellowAccent[700], fontSize: 18),
+            ),
           ),
         ],
       ),
@@ -92,7 +108,9 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _redirectToUpdate() async {
-    final url = latestApkUrl.isNotEmpty ? latestApkUrl : 'https://drive.google.com/drive/folders/1k51cCnURx-V04zzyrerRMDSo-YCWrKEP?usp=sharing';
+    final url = latestApkUrl.isNotEmpty
+        ? latestApkUrl
+        : 'https://drive.google.com/drive/folders/1k51cCnURx-V04zzyrerRMDSo-YCWrKEP?usp=sharing';
 
     if (!url.startsWith('http')) {
       print('Invalid URL: $url');
@@ -102,18 +120,17 @@ class _DashboardState extends State<Dashboard> {
       return;
     }
 
-    final encodedUrl = Uri.encodeFull(url);
-    if (await canLaunch(encodedUrl)) {
-      print('Launching URL: $encodedUrl');
-      await launch(encodedUrl, forceSafariVC: false, forceWebView: false);
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      print('Launching URL: $url');
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      print('Could not launch URL: $encodedUrl');
+      print('Could not launch URL: $url');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Could not launch update URL')),
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

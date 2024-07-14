@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
+import 'package:package_info/package_info.dart';
 
 import '../services/auth_service.dart';
 import 'edit_profile.dart';
@@ -18,29 +18,41 @@ class _UserProfilePageState extends State<UserProfilePage> {
   late Future<DocumentSnapshot> _userDataFuture;
   var authService = AuthService();
   var isLogoutLoading = false;
-  late String _currentTime;
+
+  // late String _currentTime;
+  String _appVersion = '';
 
   @override
   void initState() {
     super.initState();
     _user = FirebaseAuth.instance.currentUser!;
     _userDataFuture = _fetchUserData();
-    _currentTime = '';
-    _updateTimeEverySecond();
+    // _currentTime = '';
+    // _updateTimeEverySecond();
+    _fetchAppVersion();
   }
 
-  String _getCurrentTime() {
-    return DateFormat('dd MMMM yyyy hh:mm:ss a').format(DateTime.now());
-  }
-
-  void _updateTimeEverySecond() {
-    Future.delayed(Duration(seconds: 1)).then((_) {
-      setState(() {
-        _currentTime = _getCurrentTime();
-      });
-      _updateTimeEverySecond();
+  Future<void> _fetchAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _appVersion = packageInfo.version;
     });
   }
+
+  // String _getCurrentTime() {
+  //   return DateFormat('dd MMMM yyyy hh:mm:ss a').format(DateTime.now());
+  // }
+  //
+  // void _updateTimeEverySecond() {
+  //   Future.delayed(Duration(seconds: 1)).then((_) {
+  //     if (mounted) {
+  //       setState(() {
+  //         _currentTime = _getCurrentTime();
+  //       });
+  //       _updateTimeEverySecond();
+  //     }
+  //   });
+  // }
 
   Future<DocumentSnapshot> _fetchUserData() async {
     final userDocSnapshot = await FirebaseFirestore.instance
@@ -171,41 +183,41 @@ class _UserProfilePageState extends State<UserProfilePage> {
               return Center(child: Text("Error: ${snapshot.error}"));
             } else {
               final userDoc = snapshot.data!;
-              DateTime? date;
-              String formattedDate = '';
-
-              date = DateTime.fromMillisecondsSinceEpoch(userDoc['updatedAt']);
-              formattedDate = DateFormat('dd MMMM yyyy hh:mm a').format(date);
+              // DateTime? date;
+              // String formattedDate = '';
+              //
+              // date = DateTime.fromMillisecondsSinceEpoch(userDoc['updatedAt']);
+              // formattedDate = DateFormat('dd MMMM yyyy hh:mm a').format(date);
 
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: double.infinity,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.greenAccent.shade400,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              '$_currentTime',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   width: double.infinity,
+                    //   height: 60,
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.greenAccent.shade400,
+                    //     borderRadius: BorderRadius.circular(10),
+                    //   ),
+                    //   child: Center(
+                    //     child: Column(
+                    //       mainAxisAlignment: MainAxisAlignment.center,
+                    //       crossAxisAlignment: CrossAxisAlignment.center,
+                    //       children: [
+                    //         Text(
+                    //           '$_currentTime',
+                    //           style: TextStyle(
+                    //             color: Colors.black,
+                    //             fontSize: 18,
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: 20),
                     Container(
                       width: double.infinity,
@@ -316,6 +328,32 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ),
                     ),
                     SizedBox(height: 20),
+                    // Container(
+                    //   width: double.infinity,
+                    //   height: 60,
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.greenAccent.shade400,
+                    //     borderRadius: BorderRadius.circular(10),
+                    //   ),
+                    //   child: Center(
+                    //     child: Column(
+                    //       mainAxisAlignment: MainAxisAlignment.center,
+                    //       crossAxisAlignment: CrossAxisAlignment.center,
+                    //       children: [
+                    //         if (formattedDate.isNotEmpty)
+                    //           Text(
+                    //             'Last Updated: $formattedDate',
+                    //             style: TextStyle(
+                    //               color: Colors.black,
+                    //               fontSize: 18,
+                    //               fontWeight: FontWeight.w600,
+                    //             ),
+                    //           ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(height: 20),
                     Container(
                       width: double.infinity,
                       height: 60,
@@ -328,15 +366,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            if (formattedDate.isNotEmpty)
-                              Text(
-                                'Last Updated: $formattedDate',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            Text(
+                              'App Version: $_appVersion',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
                               ),
+                            ),
                           ],
                         ),
                       ),

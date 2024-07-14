@@ -21,9 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
   var isLogoutLoading = false;
   String? userName;
 
-
-
-
   _dialogAdd(BuildContext context) {
     return showDialog(
       context: context,
@@ -53,9 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
           .get();
       if (userDoc.exists) {
         final userData = userDoc.data() as Map<String, dynamic>;
-        setState(() {
-          userName = userData['username'] ?? '';
-        });
+        if (mounted) {
+          setState(() {
+            userName = userData['username'] ?? '';
+          });
+        }
       }
     }
   }

@@ -24,6 +24,11 @@ class _TransactionScreenState extends State<TransactionScreen> {
     var now = DateTime.now();
     var formatter = DateFormat('MMMM-yyyy');
     monthYear = formatter.format(now);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        monthYear = formatter.format(now);
+      });
+    });
   }
 
   @override
