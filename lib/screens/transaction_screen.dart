@@ -24,6 +24,11 @@ class _TransactionScreenState extends State<TransactionScreen> {
     var now = DateTime.now();
     var formatter = DateFormat('MMMM-yyyy');
     monthYear = formatter.format(now);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        monthYear = formatter.format(now);
+      });
+    });
   }
 
   @override
@@ -31,6 +36,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF252634),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF252634),
         title: Center(
           child: const Text(

@@ -16,7 +16,7 @@ class _CategoryListState extends State<CategoryList> {
   List<Map<String, dynamic>> categoryList = [];
   final scrollController = ScrollController();
   var appIcon = AppIcons();
-  var addCat = {'name': 'All', 'icon': FontAwesomeIcons.listAlt};
+  var addCat = {'name': 'All', 'icon': FontAwesomeIcons.listCheck};
 
   @override
   void initState() {

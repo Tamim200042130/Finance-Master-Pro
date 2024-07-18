@@ -1,0 +1,191 @@
+name: build_upload_notify
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  build_upload_notify:
+    name: Build, Upload, and Notify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
+
+      - name: Get Branch Name
+        id: branch
+        run: echo "branch=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+
+      - name: Get Today's Date
+        id: date
+        run: echo "date=$(date +'%d%m%y')" >> $GITHUB_OUTPUT
+
+      - name: Read Current Version
+        id: read_version
+        run: echo "version=$(cat version.txt)" >> $GITHUB_OUTPUT
+
+      - name: Increment Version
+        id: increment_version
+        run: |
+          current_version="${{ steps.read_version.outputs.version }}"
+          IFS='.' read -r -a version_parts <<< "$current_version"
+          major=${version_parts[0]}
+          minor=${version_parts[1]}
+
+          if [ $minor -eq 9 ]; then
+            major=$((major + 1))
+            minor=0
+          else
+            minor=$((minor + 1))
+          fi
+
+          new_version="$major.$minor"
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+          echo $new_version > version.txt
+
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Update pubspec.yaml version
+        run: python update_pubspec_version.py
+
+      - name: Install Google API Client
+        run: pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib google-auth requests
+
+      - name: Install Firebase Admin SDK
+        run: pip install --upgrade firebase-admin
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Install slack-sdk
+        run: pip install slack-sdk
+
+      - name: Decode Keystore
+        run: echo ${{ secrets.KEYSTORE_BASE64 }} | base64 --decode > android/app/keystore.jks
+
+      - name: Delete Existing Files from Google Drive
+        env:
+          FOLDER_ID: ${{ secrets.DRIVEFOLDERID }}
+          GOOGLE_CREDENTIALS_BASE64: ${{ secrets.CREDENTIALS }}
+        run: python delete_drive_files.py
+
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+
+      - name: Rename APK File
+        run: |
+          mv build/app/outputs/apk/release/app-release.apk build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+
+      - name: Archive Files
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip
+          zip -r archive.zip build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+
+      - name: Upload to Google Drive
+        id: upload
+        uses: adityak74/google-drive-upload-git-action@main
+        with:
+          credentials: ${{ secrets.CREDENTIALS }}
+          filename: "build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
+          folderId: ${{ secrets.DRIVEFOLDERID }}
+          name: "Finance Master Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
+          overwrite: "true"
+          mimeType: "application/vnd.android.package-archive"
+
+      #      - name: Delay Execution
+      #        id: delay
+      #        run: sleep 600  # Sleep for 600 seconds (10 minutes)
+      #        if: success()  # Only run if upload was successful
+
+      - name: Fetch Latest APK URL
+        id: fetch_apk_url
+        run: |
+          apk_url=$(python fetch_latest_apk_url.py)
+          echo "apk_url=$apk_url" >> $GITHUB_OUTPUT
+        env:
+          CREDENTIALS: ${{ secrets.CREDENTIALS }}
+          DRIVEFOLDERID: ${{ secrets.DRIVEFOLDERID }}
+
+      - name: Debug Firebase Service Account
+        run: |
+          echo "Content of FIREBASE_SERVICE_ACCOUNT: ${FIREBASE_SERVICE_ACCOUNT}"
+          echo "Length of FIREBASE_SERVICE_ACCOUNT: ${#FIREBASE_SERVICE_ACCOUNT}"
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Commit Updated Version
+        run: |
+          git add version.txt pubspec.yaml
+          git commit -m "Increment version to ${{ steps.increment_version.outputs.new_version }}"
+          git push origin HEAD:${{ github.ref }}
+
+      - name: Push to Releases
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk,build/ios/iphoneos/app.ipa"
+          tag: v${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Upload APK to Slack
+        run: python upload_to_slack.py
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL_ID }}
+          APK_FILE_PATH: build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+
+      - name: Notify on Slack with APK
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_USERNAME: Finance Master Pro
+          SLACK_TITLE: "🎉🎉 New Release Available 🎉🎉"
+          SLACK_MESSAGE: |
+            A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
+          SLACK_COLOR: good
+          SLACK_CHANNEL: "#finance-master-pro"
+          SLACK_ICON: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQIdeZ1MahCe2snsur1xczoHnlPx6ENMuJH6UDWWhNYjIfAQyuj"
+
+      - name: Update Firebase Remote Config
+        run: python update_firebase_remote_config.py
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          APK_URL: ${{ steps.fetch_apk_url.outputs.apk_url }}
+
+      - name: Upload APK and Send Telegram Message
+        run: python send_telegram_message.py
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
+          MESSAGE: "A new release of Finance Master Pro is available. Version: ${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
+          APK_FILE_PATH: build/app/outputs/apk/release/Finance_Master_Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+
+##

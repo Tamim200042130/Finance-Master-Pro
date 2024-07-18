@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 class TimeLineMonth extends StatefulWidget {
   const TimeLineMonth({super.key, required this.onChanged});
+
   final ValueChanged<String?> onChanged;
 
   @override
@@ -24,6 +25,9 @@ class _TimeLineMonthState extends State<TimeLineMonth> {
     }
     currentMonth = DateFormat('MMM y').format(now);
     Future.delayed(Duration(seconds: 1), scrollToSelectedMonth);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onChanged(currentMonth);
+    });
   }
 
   scrollToSelectedMonth() {

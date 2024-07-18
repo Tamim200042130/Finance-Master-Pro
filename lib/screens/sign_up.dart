@@ -14,16 +14,14 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final _userNameController = TextEditingController();
-
   final _emailController = TextEditingController();
-
   final _phoneNumberController = TextEditingController();
-
   final _passwordController = TextEditingController();
-
   final _confirmPasswordController = TextEditingController();
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool _obscureTextPassword = true;
+  bool _obscureTextConfirmPassword = true;
 
   var authService = AuthService();
   var isLoader = false;
@@ -41,6 +39,7 @@ class _SignUpState extends State<SignUp> {
         'remainingAmount': 0,
         'totalIncome': 0,
         'totalExpense': 0,
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
       };
       await authService.createUser(data, context);
       setState(() {
@@ -115,21 +114,52 @@ class _SignUpState extends State<SignUp> {
                     TextFormField(
                       controller: _passwordController,
                       style: TextStyle(color: Colors.white),
-                      obscureText: true,
+                      obscureText: _obscureTextPassword,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
-                      decoration: _buildInputDecoration('Password', Icons.lock),
+                      decoration: _buildInputDecoration('Password', Icons.lock)
+                          .copyWith(
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _obscureTextPassword = !_obscureTextPassword;
+                            });
+                          },
+                          child: Icon(
+                            _obscureTextPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.yellowAccent[700],
+                          ),
+                        ),
+                      ),
                       validator: appValidator.validatePassword,
                     ),
                     SizedBox(
                       height: 16,
                     ),
                     TextFormField(
-                      obscureText: true,
+                      obscureText: _obscureTextConfirmPassword,
                       controller: _confirmPasswordController,
                       style: TextStyle(color: Colors.white),
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       decoration:
-                          _buildInputDecoration('Confirm Password', Icons.lock),
+                          _buildInputDecoration('Confirm Password', Icons.lock)
+                              .copyWith(
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _obscureTextConfirmPassword =
+                                  !_obscureTextConfirmPassword;
+                            });
+                          },
+                          child: Icon(
+                            _obscureTextConfirmPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.yellowAccent[700],
+                          ),
+                        ),
+                      ),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please enter your password';
@@ -195,7 +225,7 @@ class _SignUpState extends State<SignUp> {
             borderRadius: BorderRadius.circular(10)),
         labelStyle: TextStyle(color: Colors.white),
         labelText: labelText,
-        suffixIcon: Icon(icon, color: Colors.yellowAccent[700]),
+        prefixIcon: Icon(icon, color: Colors.yellowAccent[700]),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)));
   }
 }

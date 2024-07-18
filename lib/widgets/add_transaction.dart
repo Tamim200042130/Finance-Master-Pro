@@ -18,7 +18,7 @@ class AddTransaction extends StatefulWidget {
 
 class _AddTransactionState extends State<AddTransaction> {
   var type = 'Income';
-  var category = 'Others';
+  var category = 'Tuition Salary';
   var isLoader = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   var amountEditingController = TextEditingController();
@@ -47,25 +47,27 @@ class _AddTransactionState extends State<AddTransaction> {
           throw Exception("User document does not exist");
         }
 
-        int remainingAmount = userDocSnapshot['remainingAmount'] ?? 0;
-        int totalIncome = userDocSnapshot['totalIncome'] ?? 0;
-        int totalExpense = userDocSnapshot['totalExpense'] ?? 0;
+        double remainingAmount =
+            (userDocSnapshot['remainingAmount'] ?? 0).toDouble();
+        double totalIncome = (userDocSnapshot['totalIncome'] ?? 0).toDouble();
+        double totalExpense = (userDocSnapshot['totalExpense'] ?? 0).toDouble();
 
         if (type == 'Income') {
-          remainingAmount += amount.toInt();
-          totalIncome += amount.toInt();
+          remainingAmount += amount;
+          totalIncome += amount;
         } else {
-          remainingAmount -= amount.toInt();
-          totalExpense += amount.toInt();
+          remainingAmount -= amount;
+          totalExpense += amount;
         }
+
 
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .update({
-          'remainingAmount': remainingAmount,
-          'totalIncome': totalIncome,
-          'totalExpense': totalExpense,
+          'remainingAmount': remainingAmount.toInt(),
+          'totalIncome': totalIncome.toInt(),
+          'totalExpense': totalExpense.toInt(),
           'updateAt': timestamp,
         });
 
@@ -77,9 +79,9 @@ class _AddTransactionState extends State<AddTransaction> {
           'type': type,
           'monthyear': monthyear,
           'timestamp': timestamp,
-          'totalIncome': totalIncome,
-          'totalExpense': totalExpense,
-          'remainingAmount': remainingAmount,
+          'totalIncome': totalIncome.toInt(),
+          'totalExpense': totalExpense.toInt(),
+          'remainingAmount': remainingAmount.toInt(),
         };
 
         await FirebaseFirestore.instance
@@ -95,14 +97,22 @@ class _AddTransactionState extends State<AddTransaction> {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text('Error'),
-              content: Text('An error occurred: $error'),
+              backgroundColor: Color(0xFF252634),
+              title: Text('Error',
+                  style: TextStyle(
+                      color: Colors.redAccent.shade400,
+                      fontWeight: FontWeight.w600)),
+              content: Text('An error occurred: $error',
+                  style: TextStyle(color: Colors.white, fontSize: 18)),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Try Again'),
+                  child: Text('Try Again',
+                      style: TextStyle(
+                          color: Colors.yellowAccent[700],
+                          fontWeight: FontWeight.w600)),
                 ),
               ],
             );
@@ -141,7 +151,8 @@ class _AddTransactionState extends State<AddTransaction> {
                 style: TextStyle(color: Colors.white),
                 keyboardType: TextInputType.number,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: _buildInputDecoration('Amount', FontAwesomeIcons.sackDollar),
+                decoration: _buildInputDecoration(
+                    'Amount', FontAwesomeIcons.sackDollar),
                 validator: appValidator.validateAmount,
               ),
               SizedBox(height: 16),
@@ -272,7 +283,11 @@ class _AddTransactionState extends State<AddTransaction> {
             borderRadius: BorderRadius.circular(10)),
         labelStyle: TextStyle(color: Colors.white),
         labelText: labelText,
-        suffixIcon: Icon(icon, color: Colors.yellowAccent[700],size: 20,),
+        suffixIcon: Icon(
+          icon,
+          color: Colors.yellowAccent[700],
+          size: 20,
+        ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)));
   }
 }

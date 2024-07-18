@@ -17,6 +17,7 @@ class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _obscureText = true;
 
   var isLoader = false;
   var authService = AuthService();
@@ -82,9 +83,24 @@ class _LoginState extends State<Login> {
                     TextFormField(
                       controller: _passwordController,
                       style: TextStyle(color: Colors.white),
-                      obscureText: true,
+                      obscureText: _obscureText,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
-                      decoration: _buildInputDecoration('Password', Icons.lock),
+                      decoration: _buildInputDecoration('Password', Icons.lock)
+                          .copyWith(
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
+                          child: Icon(
+                            _obscureText
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.yellowAccent[700],
+                          ),
+                        ),
+                      ),
                     ),
                     Align(
                       alignment: Alignment.centerRight,
@@ -155,7 +171,7 @@ class _LoginState extends State<Login> {
             borderRadius: BorderRadius.circular(10)),
         labelStyle: TextStyle(color: Colors.white),
         labelText: labelText,
-        suffixIcon: Icon(icon, color: Colors.yellowAccent[700]),
+        prefixIcon: Icon(icon, color: Colors.yellowAccent[700]),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)));
   }
 }

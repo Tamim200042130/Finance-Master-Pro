@@ -1,0 +1,35 @@
+import base64
+import os
+
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+
+credentials_base64 = os.getenv('GOOGLE_CREDENTIALS_BASE64')
+credentials_json = base64.b64decode(credentials_base64).decode('utf-8')
+
+with open('credentials.json', 'w') as f:
+    f.write(credentials_json)
+
+credentials = service_account.Credentials.from_service_account_file(
+    'credentials.json',
+    scopes=['https://www.googleapis.com/auth/drive']
+)
+
+drive_service = build('drive', 'v3', credentials=credentials)
+
+folder_id = os.getenv('FOLDER_ID')
+
+query = f"'{folder_id}' in parents"
+results = drive_service.files().list(q=query, fields="files(id, name)").execute()
+items = results.get('files', [])
+
+if not items:
+    print('No files found.')
+else:
+    for item in items:
+        file_id = item['id']
+        try:
+            drive_service.files().delete(fileId=file_id).execute()
+            print(f'Deleted file: {item["name"]} ({file_id})')
+        except Exception as e:
+            print(f'Failed to delete file: {item["name"]} ({file_id}) with error: {e}')
